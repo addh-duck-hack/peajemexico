@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  angular-peaje:
+    build:
+      context: .
+      dockerfile: ./app-angular/Dockerfile
+    container_name: angular-peaje
+    restart: always
+    ports:
+      - 105:80
+  peaje-services:
+    build: ./backend
+    ports:
+      - "106:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
