@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.login-form>div>input::placeholder {
+  color: #D7D7D9; /* Cambiar por el color deseado */
+  opacity: 1; /* Opcional: Firefox reduce la opacidad por defecto */
+}
+
+/* Prefijos para compatibilidad con versiones antiguas */
+.login-form>div>input::-webkit-input-placeholder { color: #D7D7D9; } /* Chrome, Safari, Edge antiguo */
+.login-form>div>input::-moz-placeholder { color: #D7D7D9; } /* Firefox 19+ */
+.login-form>div>input:-moz-placeholder { color: #D7D7D9; } /* Firefox 4 a 18 */
+.login-form>div>input:-ms-input-placeholder { color: #D7D7D9; } /* Internet Explorer 10+ y Edge antiguo */

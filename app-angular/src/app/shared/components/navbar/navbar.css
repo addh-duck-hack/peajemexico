@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.text-main{
+  color: var(--color-label);
+}
+
+.background-navbar{
+  background-color: var(--color-main);
+}
+
+.background-selected{
+  font-weight: 900;
+  color: var(--color-label-selected);
+}

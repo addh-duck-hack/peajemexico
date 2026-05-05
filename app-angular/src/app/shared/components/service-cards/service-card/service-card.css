@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.card-content>h3 {
+  color: #8C2626;
+}
+
+.card-content>p {
+  color: #575757;
+}
+
+.card-content>a {
+  color: #8C2626;
+}

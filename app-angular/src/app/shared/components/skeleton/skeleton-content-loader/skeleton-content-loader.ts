@@ -1,0 +1,17 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'skeleton-content-loader',
+  imports: [],
+  template: `
+  <div class="bg-white rounded-lg shadow-md p-4 animate-pulse">
+    <!-- Header -->
+    <div class="w-2/3 h-4 bg-gray-300 rounded mb-2"></div>
+    <!-- Body -->
+    <div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
+    <div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
+    <div class="w-1/2 h-8 bg-gray-300 rounded"></div>
+  </div>
+  `
+})
+export class SkeletonContentLoader { }

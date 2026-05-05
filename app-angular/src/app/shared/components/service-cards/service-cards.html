@@ -1,0 +1,10 @@
+<!-- component -->
+<div class="py-16 service-cards-container">
+  <div class="container m-auto px-6 md:px-12 xl:px-0">
+    <div class="mx-auto grid gap-6 md:w-3/4 lg:w-full lg:grid-cols-3">
+      @for (card of cards(); track card.id) {
+        <service-card [card]="card" />
+      }
+    </div>
+  </div>
+</div>

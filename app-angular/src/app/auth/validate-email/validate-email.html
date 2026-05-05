@@ -1,0 +1,63 @@
+<!-- component -->
+<div class="h-screen md:flex">
+	<div
+		class="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr to-[#8C2626] from-[#F08713] i justify-around items-center hidden">
+		<div>
+			<h1 class="text-white font-bold text-4xl font-sans">{{ env.companyName }}</h1>
+			<p class="text-white mt-1">Servicios</p>
+			<a routerLink="/login" class="block w-28 bg-white text-center text-[#8C2626] mt-4 py-2 rounded-2xl font-bold mb-2">Ingresar</a>
+		</div>
+		<div class="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+		<div class="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+		<div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+		<div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+	</div>
+	<div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
+		<form class="bg-white login-form" style="width: 60%;">
+			<h1 class="text-gray-800 font-bold text-2xl mb-1">¡Hola!</h1>
+			<p class="text-sm font-normal text-gray-600 mb-7">Presiona el boton de abajo para poder validar tu cuenta</p>
+      <button
+        type="button"
+        (click)="validateEmail()"
+        class="block w-full hover:bg-[#C93636] bg-[#8C2626] cursor-pointer mt-4 py-2 rounded-2xl text-white font-semibold mb-2">
+        Validar correo
+      </button>
+      @if (descriptionErrors().length > 0) {
+        <div class="max-w-4xl mx-auto mt-4">
+          <div class="bg-red-50 border-l-8 border-[#8C2626]">
+            <div class="flex items-center">
+              <div class="p-2">
+                <div class="flex items-center">
+                  <div class="ml-2">
+                    <svg class="h-8 w-8 text-[#8C2626] mr-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <p class="px-6 py-4 text-[#8C2626] font-semibold text-lg">Para continuar revisa los errores:</p>
+                </div>
+                <div class="px-16 mb-4">
+                  @for (description of descriptionErrors(); track description) {
+                    <li class="text-md font-bold text-red-800 text-sm">{{description}}</li>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (descriptionSuccess() != '') {
+        <div class="max-w-4xl mx-auto mt-4">
+          <div class="bg-green-50 border-l-8 border-[#3B9C32]">
+            <div class="flex items-center">
+              <div class="p-2">
+                <div class="px-16">
+                  <li class="text-md font-bold text-green-800 text-sm">{{descriptionSuccess()}}</li>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+		</form>
+	</div>
+</div>

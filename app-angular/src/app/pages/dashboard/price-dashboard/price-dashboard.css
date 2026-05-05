@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.price-form>div>input::placeholder {
+  color: #D7D7D9; /* Cambiar por el color deseado */
+  opacity: 1; /* Opcional: Firefox reduce la opacidad por defecto */
+}
+
+/* Prefijos para compatibilidad con versiones antiguas */
+.price-form>div>input::-webkit-input-placeholder { color: #D7D7D9; } /* Chrome, Safari, Edge antiguo */
+.price-form>div>input::-moz-placeholder { color: #D7D7D9; } /* Firefox 19+ */
+.price-form>div>input:-moz-placeholder { color: #D7D7D9; } /* Firefox 4 a 18 */
+.price-form>div>input:-ms-input-placeholder { color: #D7D7D9; } /* Internet Explorer 10+ y Edge antiguo */
+
+.price-content-input {
+  border: 2px solid #575757;
+}
+
+.price-rounded {
+  border-radius: 5px;
+}
+.price-form-icon {
+  color: #D7D7D9;
+}
+
+.price-no-margin {
+  margin-top: -10px;
+  margin-bottom: -10px;
+  margin-right: -8px;
+}
+
+.content-destines {
+  max-height: 150px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-padding: 0;
+}
+
+#map {
+  height: 70vh;
+  width: 100%;
+  margin: 20px 0;
+  border-radius: 8px;
+  z-index: 1;
+}

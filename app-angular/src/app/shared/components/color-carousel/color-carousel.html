@@ -1,0 +1,52 @@
+<!-- component -->
+<div class="color-carousel relative w-full bg-slate-800">
+  @for (item of carouselItems; track item.id; let i = $index) {
+    @if (i == 0) {
+      <input
+        [class]="'hidden peer/slider' + item.id +' checkbox'"
+        type="radio"
+        name="slider"
+        [id]="'slider' + item.id"
+        checked
+      />
+    }
+    @else{
+      <input
+        [class]="'hidden peer/slider' + item.id +' checkbox'"
+        type="radio"
+        name="slider"
+        [id]="'slider' + item.id"
+      />
+    }
+  }
+  <div
+    [class]="classOfMainCarousel()"
+  >
+    @for (item of carouselItems; track item.id; let i = $index) {
+      <div
+        [style.backgroundImage]="'url(' + item.image + ')'"
+        class="img-carousel-color relative w-full h-full flex">
+      </div>
+    }
+  </div>
+
+  <div
+    class="absolute w-full flex justify-center gap-2 bottom-12 peer-[&_label:nth-of-type(1)]/slider1:peer-checked/slider1:opacity-100 peer-[&_label:nth-of-type(1)]/slider1:peer-checked/slider1:w-10 peer-[&_label:nth-of-type(2)]/slider2:peer-checked/slider2:opacity-100 peer-[&_label:nth-of-type(2)]/slider2:peer-checked/slider2:w-10 peer-[&_label:nth-of-type(3)]/slider3:peer-checked/slider3:opacity-100 peer-[&_label:nth-of-type(3)]/slider3:peer-checked/slider3:w-10"
+  >
+    <label
+      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
+      for="slider1"
+    >
+    </label>
+    <label
+      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
+      for="slider2"
+    >
+    </label>
+    <label
+      class="block w-5 h-5 bg-white cursor-pointer opacity-50 z-10 transition-all duration-300 ease-in-out hover:scale-125 hover:opacity-100"
+      for="slider3"
+    >
+    </label>
+  </div>
+</div>
