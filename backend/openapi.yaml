@@ -1,25 +1,214 @@
 openapi: 3.0.3
 info:
-  title: Duck-Hack Cloud API
-  version: 1.0.0
+  title: PeajeMexico API
+  version: 1.1.0
   description: >
-    API base del proyecto CRM/eCommerce (estado actual).
-    Incluye autenticación, gestión de usuarios, contacto por correo y archivos públicos.
+    API backend de PeajeMexico: calculadora de costos de casetas para rutas
+    en la red carretera federal de México, respaldada por la API de Ruteo del
+    INEGI. Incluye autenticación de usuarios, cálculo de rutas/costos y
+    contacto por correo.
+
+
+    **Estado de montaje (2026-07-29):** no todos los routers definidos en el
+    código están activos en `server.js`. Cada operación de abajo indica su
+    estado real vía la extensión `x-status`:
+    - `live`: montado y accesible hoy.
+    - `not-mounted`: el archivo de rutas existe y está completamente
+      implementado, pero su `app.use(...)` está comentado en `server.js`, por
+      lo que el endpoint no responde en ningún ambiente actualmente.
+
+
+    **Known issues:**
+    - Los prefijos reales de montaje son `/api/ds/...` (ver `server.js`), no
+      `/api/users/...` / `/api/mail/...` / `/api/uploads/...` como sugería una
+      versión previa de este documento.
+    - `user.routes.js` y `upload.routes.js` referencian los roles
+      `store_admin` y `catalog_manager` en `authorizeRoles(...)`, pero
+      `middleware/authMiddleware.js` (fuente de verdad) solo define los roles
+      `super_admin` y `customer` (igual que el enum de `models/user.model.js`).
+      Mientras no se agreguen esos roles al sistema de auth, cualquier
+      endpoint que dependa de ellos responderá siempre `500
+      RBAC_CONFIGURATION_INVALID` en cuanto se monten.
+    - `validationMiddleware.js` expone `validateStoreConfigPayload`
+      (storeName/storeSlug/theme/homeBlocks) sin ningún router que lo
+      consuma; parece código heredado de otro proyecto (tienda
+      multi-tenant), no de PeajeMexico.
+    - El servido estático de `/api/ds/uploads` (`express.static`) también
+      está comentado en `server.js`; los `imagePath` que devolvería
+      `/products-image` no son descargables hoy.
 servers:
   - url: http://localhost:5000
-    description: Local backend
-  - url: http://localhost:83
-    description: Docker Compose backend
+    description: Backend local (node server.js / npm start)
+  - url: http://localhost:106
+    description: Backend vía docker-compose (mapeado 106->5000)
 tags:
   - name: Auth
+    description: Registro, login y ciclo de vida de cuenta (user.routes.js) — not-mounted
   - name: Users
+    description: Gestión de usuarios (user.routes.js) — not-mounted
+  - name: Destinations
+    description: Autocomplete de origen/destino vía INEGI — live
+  - name: RouteCost
+    description: Cálculo de costo de ruta y desglose por caseta vía INEGI — live
   - name: Mail
+    description: Formulario de contacto — live
   - name: Uploads
+    description: Carga de imágenes de producto (upload.routes.js) — not-mounted
+
 paths:
-  /api/users/register:
+  # ---------------------------------------------------------------------
+  # Destinations (live) — /api/ds/destination
+  # ---------------------------------------------------------------------
+  /api/ds/destination/{search}:
+    get:
+      tags: [Destinations]
+      summary: Buscar destinos (autocomplete origen/destino)
+      x-status: live
+      description: >
+        Público, sin autenticación. Limitado a 30 solicitudes / 10 minutos
+        por IP (ver `tollCalculatorRateLimiter`).
+      parameters:
+        - in: path
+          name: search
+          required: true
+          schema:
+            type: string
+          description: Texto de búsqueda del lugar
+      responses:
+        "200":
+          description: Resultados de búsqueda de destinos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DestinationResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          description: Error al consultar la API del INEGI
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ---------------------------------------------------------------------
+  # RouteCost (live) — /api/ds/route/cost
+  # ---------------------------------------------------------------------
+  /api/ds/route/cost/calculate:
+    post:
+      tags: [RouteCost]
+      summary: Calcular costo total de una ruta origen-destino
+      x-status: live
+      description: >
+        Público, sin autenticación. Limitado a 30 solicitudes / 10 minutos
+        por IP (ver `tollCalculatorRateLimiter`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteCostRequest"
+      responses:
+        "200":
+          description: Costo calculado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteCostResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          description: Error al consultar la API del INEGI
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/ds/route/cost/details:
+    post:
+      tags: [RouteCost]
+      summary: Obtener desglose de costo por caseta de una ruta
+      x-status: live
+      description: >
+        Público, sin autenticación. Limitado a 30 solicitudes / 10 minutos
+        por IP (ver `tollCalculatorRateLimiter`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteCostRequest"
+      responses:
+        "200":
+          description: Desglose por caseta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailRouteCostResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          description: Error al consultar la API del INEGI
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ---------------------------------------------------------------------
+  # Mail (live) — /api/ds/mail
+  # ---------------------------------------------------------------------
+  /api/ds/mail/send-email:
+    post:
+      tags: [Mail]
+      summary: Enviar correo de contacto
+      x-status: live
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactEmailRequest"
+      responses:
+        "200":
+          description: Correo enviado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          description: Error SMTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ---------------------------------------------------------------------
+  # Auth / Users (not-mounted) — /api/ds/users
+  # ---------------------------------------------------------------------
+  /api/ds/users/register:
     post:
       tags: [Auth]
       summary: Registrar usuario customer
+      x-status: not-mounted
+      description: >
+        Requiere `customerKey` igual a la variable de entorno `CUSTOMER_KEY`.
+        Envía correo de verificación con un token `email_verification`
+        (24h) hacia `${FRONTEND_URL}/users/verify?token=...`.
       requestBody:
         required: true
         content:
@@ -35,6 +224,12 @@ paths:
                 $ref: "#/components/schemas/RegisterResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "403":
+          description: Clave de cliente inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "409":
           $ref: "#/components/responses/EmailAlreadyRegistered"
         "429":
@@ -42,10 +237,11 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/users/verify:
+  /api/ds/users/verify:
     get:
       tags: [Auth]
       summary: Verificar cuenta por token de correo
+      x-status: not-mounted
       parameters:
         - in: query
           name: token
@@ -60,7 +256,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MessageResponse"
         "400":
-          description: Token faltante o inválido/expirado
+          description: Token faltante, inválido o expirado
           content:
             application/json:
               schema:
@@ -68,10 +264,72 @@ paths:
         "404":
           $ref: "#/components/responses/UserNotFound"
 
-  /api/users/login:
+  /api/ds/users/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Solicitar enlace de recuperación de contraseña
+      x-status: not-mounted
+      description: >
+        Requiere `customerKey` igual a `CUSTOMER_KEY`. Envía token
+        `reset_password` hacia `${FRONTEND_URL}/reset-password?token=...`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        "200":
+          description: Enlace de recuperación enviado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          description: Clave de cliente inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/ds/users/reset-password:
+    post:
+      tags: [Auth]
+      summary: Cambiar contraseña con token de reset
+      x-status: not-mounted
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        "200":
+          description: Contraseña cambiada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Token faltante/inválido/expirado o contraseña inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+
+  /api/ds/users/login:
     post:
       tags: [Auth]
       summary: Iniciar sesión
+      x-status: not-mounted
       requestBody:
         required: true
         content:
@@ -104,10 +362,14 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/users:
+  /api/ds/users:
     get:
       tags: [Users]
       summary: Listar usuarios
+      x-status: not-mounted
+      x-known-issue: >
+        Requiere rol store_admin o super_admin; store_admin no existe en
+        authMiddleware.js hoy (ver Known issues en info.description).
       security:
         - bearerAuth: []
       responses:
@@ -126,10 +388,11 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/users/{id}:
+  /api/ds/users/{id}:
     get:
       tags: [Users]
-      summary: Obtener usuario por id
+      summary: Obtener usuario por id (self o admin)
+      x-status: not-mounted
       security:
         - bearerAuth: []
       parameters:
@@ -155,9 +418,14 @@ paths:
     put:
       tags: [Users]
       summary: Actualizar usuario (datos generales y/o rol)
+      x-status: not-mounted
+      x-known-issue: >
+        Permite asignar rol store_admin, que no existe en authMiddleware.js
+        hoy (ver Known issues en info.description).
       description: >
-        No permite cambiar email. Soporta multipart/form-data para profileImage.
-        El archivo se valida por contenido real (no solo mimetype) y se aceptan únicamente JPG/PNG.
+        No permite cambiar email. Soporta multipart/form-data para
+        profileImage. El archivo se valida por contenido real (no solo
+        mimetype) y se aceptan únicamente JPG/PNG.
       security:
         - bearerAuth: []
       parameters:
@@ -189,6 +457,10 @@ paths:
     delete:
       tags: [Users]
       summary: Eliminar usuario por id
+      x-status: not-mounted
+      x-known-issue: >
+        Requiere rol store_admin o super_admin; store_admin no existe en
+        authMiddleware.js hoy (ver Known issues en info.description).
       security:
         - bearerAuth: []
       parameters:
@@ -211,10 +483,11 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/users/{id}/password:
+  /api/ds/users/{id}/password:
     patch:
       tags: [Users]
-      summary: Cambiar contraseña del usuario autenticado
+      summary: Cambiar contraseña del usuario autenticado (solo dueño)
+      x-status: not-mounted
       security:
         - bearerAuth: []
       parameters:
@@ -243,41 +516,25 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/mail/send-email:
-    post:
-      tags: [Mail]
-      summary: Enviar correo de contacto
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ContactEmailRequest"
-      responses:
-        "200":
-          description: Correo enviado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MessageResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "500":
-          description: Error SMTP
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-  /api/uploads/products-image:
+  # ---------------------------------------------------------------------
+  # Uploads (not-mounted) — /api/ds/uploads
+  # ---------------------------------------------------------------------
+  /api/ds/uploads/products-image:
     post:
       tags: [Uploads]
       summary: Subir imagen de producto
+      x-status: not-mounted
+      x-known-issue: >
+        Requiere rol super_admin, store_admin o catalog_manager; ninguno de
+        los dos últimos existe en authMiddleware.js hoy, y no hay ningún
+        concepto de "producto" en el dominio de PeajeMexico — confirmar si
+        este endpoint aplica al proyecto o debe eliminarse (ver Known issues
+        en info.description).
       description: >
-        Requiere autenticación y rol administrativo (`super_admin`, `store_admin`, `catalog_manager`).
-        El archivo se valida por contenido real y se acepta únicamente JPG/PNG (máx. 5MB).
+        Requiere autenticación y rol administrativo. El archivo se valida
+        por contenido real y se acepta únicamente JPG/PNG (máx. 5MB). El
+        servido estático del archivo resultante también está deshabilitado
+        hoy (ver Known issues).
       security:
         - bearerAuth: []
       requestBody:
@@ -307,22 +564,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-
-  /uploads/{fileName}:
-    get:
-      tags: [Uploads]
-      summary: Obtener archivo estático subido
-      parameters:
-        - in: path
-          name: fileName
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Archivo servido por Express static
-        "404":
-          $ref: "#/components/responses/RouteNotFound"
 
 components:
   securitySchemes:
@@ -424,11 +665,12 @@ components:
   schemas:
     Role:
       type: string
+      description: >
+        Roles soportados hoy por middleware/authMiddleware.js y
+        models/user.model.js. No incluye store_admin/catalog_manager
+        referenciados por rutas not-mounted (ver Known issues).
       enum:
         - super_admin
-        - store_admin
-        - catalog_manager
-        - order_manager
         - customer
 
     UserPublic:
@@ -485,7 +727,10 @@ components:
         password:
           type: string
           minLength: 6
-      required: [name, email, password]
+        customerKey:
+          type: string
+          description: Debe coincidir con la variable de entorno CUSTOMER_KEY.
+      required: [name, email, password, customerKey]
 
     RegisterResponse:
       type: object
@@ -495,6 +740,26 @@ components:
         user:
           $ref: "#/components/schemas/UserPublic"
       required: [message, user]
+
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        customerKey:
+          type: string
+      required: [email, customerKey]
+
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
+      required: [token, newPassword]
 
     LoginRequest:
       type: object
@@ -580,6 +845,157 @@ components:
           minLength: 10
           maxLength: 2000
       required: [fullName, email, service, message]
+
+    RouteCostRequest:
+      type: object
+      description: Body compartido por /route/cost/calculate y /route/cost/details.
+      properties:
+        origin:
+          type: string
+          description: id_dest de origen (obtenido de /api/ds/destination/{search}).
+        destination:
+          type: string
+          description: id_dest de destino.
+        vehicleType:
+          type: string
+          description: Clave de tipo de vehículo aceptada por la API del INEGI.
+        over:
+          type: string
+          description: Ejes excedentes, si el tipo de vehículo aplica.
+      required: [origin, destination, vehicleType]
+
+    InegiMeta:
+      type: object
+      properties:
+        fuente:
+          type: string
+      required: [fuente]
+
+    InegiResponseStatus:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    DestinationInegiItem:
+      type: object
+      properties:
+        geojson:
+          type: string
+        ent_abr:
+          type: string
+        id_dest:
+          type: string
+        nombre:
+          type: string
+      required: [geojson, ent_abr, id_dest, nombre]
+
+    DestinationResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        inegi:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/DestinationInegiItem"
+            meta:
+              $ref: "#/components/schemas/InegiMeta"
+            response:
+              $ref: "#/components/schemas/InegiResponseStatus"
+          required: [data, meta, response]
+      required: [ok, message, inegi]
+
+    CostInegiData:
+      type: object
+      properties:
+        geojson:
+          type: string
+        costo_caseta:
+          type: number
+        tiempo_min:
+          type: number
+        advertencia:
+          type: string
+        long_km:
+          type: number
+        peaje:
+          type: string
+        eje_excedente:
+          type: number
+          nullable: true
+      required: [geojson, costo_caseta, tiempo_min, advertencia, long_km, peaje]
+
+    RouteCostResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        inegi:
+          type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/CostInegiData"
+            meta:
+              $ref: "#/components/schemas/InegiMeta"
+            response:
+              $ref: "#/components/schemas/InegiResponseStatus"
+          required: [data, meta, response]
+      required: [ok, message, inegi]
+
+    DetailCostInegiData:
+      type: object
+      properties:
+        geojson:
+          type: string
+        eje_excedente:
+          type: number
+        costo_caseta:
+          type: number
+        tiempo_min:
+          type: number
+        long_m:
+          type: number
+        punto_caseta:
+          type: string
+          nullable: true
+        direccion:
+          type: string
+        giro:
+          type: number
+      required:
+        [geojson, eje_excedente, costo_caseta, tiempo_min, long_m, direccion, giro]
+
+    DetailRouteCostResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        inegi:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/DetailCostInegiData"
+            meta:
+              $ref: "#/components/schemas/InegiMeta"
+            response:
+              $ref: "#/components/schemas/InegiResponseStatus"
+          required: [data, meta, response]
+      required: [ok, message, inegi]
 
     MessageResponse:
       type: object

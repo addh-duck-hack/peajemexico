@@ -30,3 +30,6 @@ yarn-error.log*
 # System files
 .DS_Store
 Thumbs.db
+
+# Util docs
+/backend/docs/

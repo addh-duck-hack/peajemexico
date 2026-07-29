@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { verifyToken } = require('../middleware/authMiddleware');
+const { tollCalculatorRateLimiter } = require("../middleware/rateLimitMiddleware");
 const { sendError } = require("../utils/httpResponses");
 
-// Endpoint para buscar destinos
-router.post('/calculate', verifyToken, async (req, res) => {
+// Endpoint público para calcular el costo de una ruta (limitado por IP, ver rateLimitMiddleware)
+router.post('/calculate', tollCalculatorRateLimiter, async (req, res) => {
   const { origin, destination, vehicleType, over } = req.body;
 
   // Validar que todos los datos existan sino se regresa error indicando el error
@@ -54,7 +54,8 @@ router.post('/calculate', verifyToken, async (req, res) => {
   }
 });
 
-router.post('/details', verifyToken, async (req, res) => {
+// Endpoint público para el desglose de costo por caseta (limitado por IP, ver rateLimitMiddleware)
+router.post('/details', tollCalculatorRateLimiter, async (req, res) => {
   const { origin, destination, vehicleType, over } = req.body;
 
   // Validar que todos los datos existan sino se regresa error indicando el error
