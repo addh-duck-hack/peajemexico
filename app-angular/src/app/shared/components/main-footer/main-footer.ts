@@ -9,5 +9,5 @@ import { environment } from '@environments/environment';
 })
 export class MainFooter {
   env = environment
-  logo = 'images/logo_opcaity.png';
+  logo = 'images/logo-mark.svg';
 }
