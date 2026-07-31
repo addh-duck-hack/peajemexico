@@ -1,3 +1,21 @@
 :host {
   display: block;
 }
+
+.contact-content-input {
+  border: 1.5px solid var(--color-border);
+  transition: border-color 0.15s ease;
+}
+
+.contact-content-input:focus-within {
+  border-color: var(--color-accent);
+}
+
+.contact-rounded {
+  border-radius: 0.5rem;
+}
+
+.contact-form-icon {
+  color: var(--color-ink-soft);
+  margin-right: 0.25rem;
+}

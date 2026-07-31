@@ -3,7 +3,14 @@
 <main>
   <!-- Hero -->
   <section class="relative overflow-hidden bg-[var(--color-bg)]">
-    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
+    <div class="absolute inset-0 pointer-events-none">
+      <img
+        src="images/hero-highway.jpg"
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover opacity-50 md:opacity-90" />
+      <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-bg)] via-[var(--color-bg)]/85 to-[var(--color-bg)]/40"></div>
+    </div>
+    <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
       <div class="max-w-2xl">
         <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
           Calculadora de casetas para México
@@ -62,10 +69,10 @@
       <div class="max-w-2xl">
         <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink)]">¿Cómo funciona?</h2>
         <p class="mt-3 text-[var(--color-ink-soft)]">
-          Tres pasos para obtener el costo de tu ruta.
+          Todo lo que puedes hacer con la calculadora, paso a paso.
         </p>
       </div>
-      <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         @for (step of steps; track step.number) {
           <div>
             <span class="text-4xl md:text-5xl font-extrabold text-[var(--color-accent)]" style="font-family: var(--font-display);">{{ step.number }}</span>
@@ -98,6 +105,7 @@
           <li>Los tiempos estimados de viaje asumen condiciones óptimas, sin tráfico, clima ni paradas.</li>
           <li>Las tarifas de casetas pueden variar respecto al costo real vigente, ya que suelen actualizarse por temporadas y pueden diferir por región.</li>
           <li>Los resultados son una estimación de apoyo para planear tu viaje; el uso que se les dé es responsabilidad de quien consulta la herramienta.</li>
+          <li>El uso de la calculadora es gratuito y no requiere una cuenta; para evitar abusos del servicio, se aplica un límite de 30 consultas cada 10 minutos por dirección IP.</li>
         </ul>
         <p class="mt-6 text-sm text-[var(--color-ink-soft)]">
           Este sitio es un servicio independiente y no está afiliado al INEGI, a Caminos y Puentes Federales (CAPUFE) ni a la Secretaría de Infraestructura, Comunicaciones y Transportes (SICT).
@@ -107,8 +115,12 @@
   </section>
 
   <!-- CTA final -->
-  <section class="bg-[var(--color-ink)]">
-    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20 text-center">
+  <section class="relative overflow-hidden bg-[var(--color-ink)]">
+    <img
+      src="images/cta-mountain-road.jpg"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover object-bottom opacity-20" />
+    <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20 text-center">
       <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink-invert)]">
         Planea tu próximo viaje con el costo claro desde antes de salir
       </h2>

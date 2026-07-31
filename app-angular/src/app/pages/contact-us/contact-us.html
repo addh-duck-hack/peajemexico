@@ -1,2 +1,151 @@
 <navbar />
-<p>contact-us works!</p>,
+
+<main>
+  <section class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+      <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+        Contacto
+      </span>
+      <h1 class="mt-4 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Contáctanos</h1>
+      <p class="mt-2 text-[var(--color-ink-soft)] max-w-2xl">
+        ¿Tienes dudas, comentarios o necesitas ayuda con la calculadora de casetas? Puedes contactarnos por
+        teléfono, WhatsApp o correo electrónico, o dejarnos tu mensaje en el siguiente formulario.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-[var(--color-bg)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10">
+      <div class="w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <!-- Contenedor de los medios de contacto -->
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 lg:col-span-2 h-fit">
+          <h2 class="text-lg font-bold text-[var(--color-ink)] mb-4">Medios de contacto</h2>
+          <nav class="flex flex-col space-y-4 text-sm">
+            <a
+              class="flex items-center gap-3 text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]"
+              href="tel:+525661653418">
+              <i class="fa-solid fa-phone contact-form-icon"></i>
+              <span>Teléfono: +52 566-165-3418</span>
+            </a>
+            <a
+              class="flex items-center gap-3 text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]"
+              href="https://wa.me/5215661653418?text=Te%20contacto%20desde%20el%20sitio%20peajesmx.com"
+              target="_blank"
+              rel="noreferrer">
+              <i class="fa-brands fa-whatsapp contact-form-icon"></i>
+              <span>WhatsApp: +52 566-165-3418</span>
+            </a>
+            <a
+              class="flex items-center gap-3 text-[var(--color-ink-soft)] hover:text-[var(--color-accent)]"
+              href="mailto:redes.sociales@duck-hack.com">
+              <i class="fa-solid fa-envelope contact-form-icon"></i>
+              <span>Email: redes.sociales@duck-hack.com</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Contenedor del formulario de contacto -->
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 lg:col-span-3">
+          <h2 class="text-lg font-bold text-[var(--color-ink)] mb-4">Envíanos un mensaje</h2>
+          <form class="w-full">
+            <div class="flex items-center contact-content-input py-2 px-3 contact-rounded">
+              <i class="fa-solid fa-user contact-form-icon"></i>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                type="text"
+                name="fullName"
+                [value]="fullName()"
+                (input)="fullName.set(fullNameInput.value)"
+                placeholder="Nombre completo"
+                #fullNameInput
+              />
+            </div>
+
+            <div class="flex items-center contact-content-input py-2 px-3 contact-rounded mt-4">
+              <i class="fa-solid fa-at contact-form-icon"></i>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                type="email"
+                name="email"
+                [value]="email()"
+                (input)="email.set(emailInput.value)"
+                placeholder="Correo electrónico"
+                #emailInput
+              />
+            </div>
+
+            <div class="flex items-center contact-content-input py-2 px-3 contact-rounded mt-4">
+              <i class="fa-solid fa-phone contact-form-icon"></i>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                type="tel"
+                name="phone"
+                [value]="phone()"
+                (input)="phone.set(phoneInput.value)"
+                placeholder="Teléfono (opcional)"
+                #phoneInput
+              />
+            </div>
+
+            <div class="flex items-center contact-content-input py-2 px-3 contact-rounded mt-4">
+              <i class="fa-solid fa-list-check contact-form-icon"></i>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                type="text"
+                name="service"
+                [value]="service()"
+                (input)="service.set(serviceInput.value)"
+                placeholder="Servicio o motivo de contacto"
+                #serviceInput
+              />
+            </div>
+
+            <div class="flex items-start contact-content-input py-2 px-3 contact-rounded mt-4">
+              <i class="fa-solid fa-message contact-form-icon mt-1"></i>
+              <textarea
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)] resize-none"
+                name="message"
+                rows="4"
+                [value]="message()"
+                (input)="message.set(messageInput.value)"
+                placeholder="Cuéntanos en qué te podemos ayudar"
+                #messageInput
+              ></textarea>
+            </div>
+
+            <button
+              (click)="submitContactForm()"
+              type="button"
+              class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 contact-rounded text-[var(--color-ink-invert)] font-semibold">
+              Enviar mensaje
+            </button>
+
+            @if (formErrors().length > 0) {
+              <div class="mt-2">
+                @for (formError of formErrors(); track $index) {
+                  <span class="flex items-center font-medium tracking-wide text-red-600 text-xs ml-1">
+                    {{formError}}
+                  </span>
+                }
+              </div>
+            }
+
+            @if (sendSuccess()) {
+              <span class="flex items-center font-medium tracking-wide text-[var(--color-positive)] text-xs ml-1 mt-2">
+                Tu mensaje se envió correctamente, te contactaremos pronto.
+              </span>
+            }
+
+            @if (sendLoading()) {
+              <div class="mt-4">
+                <skeleton-content-loader />
+              </div>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main-footer />

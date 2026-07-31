@@ -7,7 +7,14 @@ const { sendError } = require("../utils/httpResponses");
 
 router.post('/send-email', contactEmailRateLimiter, validateContactEmailPayload, async (req, res) => {
     const { fullName, email, phone, service, message } = req.body;
-  
+
+    const sourceSite = req.get('origin') || req.get('referer') || 'Origen desconocido';
+    const sentAt = new Intl.DateTimeFormat('es-MX', {
+      timeZone: 'America/Mexico_City',
+      dateStyle: 'long',
+      timeStyle: 'medium',
+    }).format(new Date());
+
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: parseInt(process.env.EMAIL_PORT, 10),
@@ -17,12 +24,12 @@ router.post('/send-email', contactEmailRateLimiter, validateContactEmailPayload,
         pass: process.env.EMAIL_PASS,
       },
     });
-  
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: 'a.jacobo@duck-hack.com',
       subject: `Contacto de ${fullName}`,
-      text: `Nombre: ${fullName}\nCorreo: ${email}\nTeléfono: ${phone}\nServicio: ${service}\nMensaje: ${message}`,
+      text: `Nombre: ${fullName}\nCorreo: ${email}\nTeléfono: ${phone}\nServicio: ${service}\nMensaje: ${message}\n\nEnviado desde: ${sourceSite}\nFecha y hora: ${sentAt}`,
     };
   
     try {
