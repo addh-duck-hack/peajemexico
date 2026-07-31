@@ -1,8 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, signal } from '@angular/core';
 import '@tailwindplus/elements';
 import { environment } from '@environments/environment';
 import { NavbarItem } from '../../interfaces/navbar-item.interface';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'navbar',
@@ -14,6 +15,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Navbar {
   logo = 'images/logo-mark.svg';
   env = environment;
+  private router = inject(Router);
 
   menuOptions:NavbarItem[] = [
     { id: 1, name: 'Inicio', route: '/' },
@@ -24,6 +26,13 @@ export class Navbar {
 
   openMobile = signal(false)
   classMobileMenu = signal('flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:items-center md:justify-end md:flex-row')
+  onCalculatorRoute = signal(this.router.url.startsWith('/calcular-mi-ruta'));
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => this.onCalculatorRoute.set(this.router.url.startsWith('/calcular-mi-ruta')));
+  }
 
   toggleMenuMobile(){
     if (this.openMobile()){

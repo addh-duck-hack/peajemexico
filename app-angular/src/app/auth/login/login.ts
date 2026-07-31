@@ -4,10 +4,24 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+
+interface Benefit {
+  icon: string;
+  text: string;
+}
+
+const BENEFITS: Benefit[] = [
+  { icon: 'fa-solid fa-gauge-high', text: 'Límite de consultas ampliado: 500 cada 10 minutos, en vez de 30' },
+  { icon: 'fa-solid fa-clock-rotate-left', text: 'Guarda el historial de tus rutas consultadas' },
+  { icon: 'fa-solid fa-user-check', text: 'Pensado para agencias de viajes, choferes y uso recurrente' },
+  { icon: 'fa-solid fa-gift', text: 'Es gratis, no requiere tarjeta ni pago alguno' },
+];
 
 @Component({
   selector: 'login',
-  imports: [RouterLink],
+  imports: [RouterLink, Navbar, MainFooter],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -18,6 +32,7 @@ export default class Login {
   title = signal('¡Hola!');
   subtitle = signal('Bienvenido de vuelta');
   env = environment;
+  benefits = BENEFITS;
   // Variables para formulario
   name = signal('');
   email = signal('');

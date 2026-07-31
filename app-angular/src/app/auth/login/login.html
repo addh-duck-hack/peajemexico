@@ -1,175 +1,205 @@
-<!-- component -->
-<div class="h-screen md:flex">
-	<div
-		class="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr to-[#8C2626] from-[#F08713] i justify-around items-center hidden">
-		<div>
-			<h1 class="text-white font-bold text-4xl font-sans">{{ env.companyName }}</h1>
-			<p class="text-white mt-1">Servicios</p>
-			<a routerLink="/" class="block w-28 bg-white text-center text-[#8C2626] mt-4 py-2 rounded-2xl font-bold mb-2">Regresar</a>
-		</div>
-		<div class="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-		<div class="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-		<div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-		<div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-	</div>
-	<div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-		<form class="bg-white login-form" style="width: 60%;">
-			<h1 class="text-gray-800 font-bold text-2xl mb-1">{{ title() }}</h1>
-			<p class="text-sm font-normal text-gray-600 mb-7">{{ subtitle() }}</p>
-			@if (typeForm() == 'register') {
-        <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#D7D7D9]" viewBox="0 0 20 20"
-            fill="currentColor">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clip-rule="evenodd" />
-          </svg>
-          <input
-            class="pl-2 outline-none border-none w-full"
-            type="text"
-            name="nameInput"
-            [value]="name()"
-            (input)="name.set(txtName.value)"
-            placeholder="Nombre Completo"
-            #txtName
-          />
+<navbar />
+
+<main class="bg-[var(--color-bg)]">
+  <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm">
+      <!-- Beneficios de registrarse (solo escritorio) -->
+      <div class="hidden md:flex flex-col justify-center relative overflow-hidden bg-[var(--color-ink)] text-[var(--color-ink-invert)] p-10 xl:p-12">
+        <div class="absolute -bottom-24 -left-24 w-64 h-64 rounded-full border-4 border-[var(--color-ink-invert)] opacity-10"></div>
+        <div class="absolute -top-24 -right-10 w-64 h-64 rounded-full border-4 border-[var(--color-ink-invert)] opacity-10"></div>
+
+        <div class="relative">
+          <span class="inline-flex items-center rounded-full bg-white/10 text-[var(--color-ink-invert)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+            {{ env.companyName }}
+          </span>
+          <h2 class="mt-6 text-2xl xl:text-3xl font-bold">Regístrate gratis y consulta más rápido</h2>
+          <p class="mt-3 text-sm text-[var(--color-ink-invert)] opacity-80">
+            Crear una cuenta no tiene costo y amplía el límite de uso de la calculadora.
+          </p>
+
+          <ul class="mt-8 space-y-4">
+            @for (benefit of benefits; track benefit.text) {
+              <li class="flex items-start gap-3">
+                <span class="flex-none w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
+                  <i [class]="benefit.icon" class="text-[var(--color-ink-invert)]"></i>
+                </span>
+                <span class="text-sm text-[var(--color-ink-invert)] opacity-90 pt-1.5">{{ benefit.text }}</span>
+              </li>
+            }
+          </ul>
+
+          <a routerLink="/servicios" class="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-ink-invert)] hover:opacity-80 transition-opacity">
+            Ver todos los niveles de acceso
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
         </div>
-      }
-      <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#D7D7D9]" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-        </svg>
-        <input
-          class="pl-2 outline-none border-none w-full"
-          type="text"
-          name="emailInput"
-          [value]="email()"
-          (input)="email.set(txtMail.value)"
-          placeholder="Correo Electrónico"
-          #txtMail
-        />
       </div>
-      @if (typeForm() != 'forgot') {
-        <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#D7D7D9]" viewBox="0 0 20 20"
-            fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clip-rule="evenodd" />
-          </svg>
-          <input
-            class="pl-2 outline-none border-none w-full"
-            type="password"
-            name="passInput"
-            [value]="password()"
-            (input)="password.set(txtPass.value)"
-            placeholder="Contraseña"
-            #txtPass
-          />
-        </div>
-      }
-      @if (typeForm() == 'register') {
-        <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#D7D7D9]" viewBox="0 0 20 20"
-            fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clip-rule="evenodd" />
-          </svg>
-          <input
-            class="pl-2 outline-none border-none w-full"
-            type="password"
-            name="pass2Input"
-            [value]="password2()"
-            (input)="password2.set(txtPass2.value)"
-            placeholder="Confirmar Contraseña"
-            #txtPass2
-          />
-        </div>
-      }
-      @if (typeForm() != 'login') {
-        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#D7D7D9]" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
-          </svg>
-          <input
-            class="pl-2 outline-none border-none w-full"
-            type="password"
-            name="keyInput"
-            maxlength="15"
-            [value]="customerKey()"
-            (input)="customerKey.set(txtKey.value)"
-            placeholder="Clave de cliente (15 caracteres)"
-            #txtKey
-          />
-        </div>
-      }
-      @if (descriptionErrors().length > 0) {
-        <div class="max-w-4xl mx-auto mt-4">
-          <div class="bg-red-50 border-l-8 border-[#8C2626]">
-            <div class="flex items-center">
-              <div class="p-2">
+
+      <!-- Formulario -->
+      <div class="flex flex-col justify-center p-6 sm:p-8 md:p-10 xl:p-12">
+        <form class="w-full max-w-sm mx-auto login-form">
+          <h1 class="text-[var(--color-ink)] font-bold text-2xl mb-1">{{ title() }}</h1>
+          <p class="text-sm font-normal text-[var(--color-ink-soft)] mb-7">{{ subtitle() }}</p>
+          @if (typeForm() == 'register') {
+            <div class="flex items-center border-2 border-[var(--color-border)] py-2 px-3 rounded-2xl mb-4 focus-within:border-[var(--color-accent)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ink-soft)]" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd" />
+              </svg>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)]"
+                type="text"
+                name="nameInput"
+                [value]="name()"
+                (input)="name.set(txtName.value)"
+                placeholder="Nombre Completo"
+                #txtName
+              />
+            </div>
+          }
+          <div class="flex items-center border-2 border-[var(--color-border)] py-2 px-3 rounded-2xl mb-4 focus-within:border-[var(--color-accent)]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ink-soft)]" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+            </svg>
+            <input
+              class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)]"
+              type="text"
+              name="emailInput"
+              [value]="email()"
+              (input)="email.set(txtMail.value)"
+              placeholder="Correo Electrónico"
+              #txtMail
+            />
+          </div>
+          @if (typeForm() != 'forgot') {
+            <div class="flex items-center border-2 border-[var(--color-border)] py-2 px-3 rounded-2xl mb-4 focus-within:border-[var(--color-accent)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ink-soft)]" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)]"
+                type="password"
+                name="passInput"
+                [value]="password()"
+                (input)="password.set(txtPass.value)"
+                placeholder="Contraseña"
+                #txtPass
+              />
+            </div>
+          }
+          @if (typeForm() == 'register') {
+            <div class="flex items-center border-2 border-[var(--color-border)] py-2 px-3 rounded-2xl mb-4 focus-within:border-[var(--color-accent)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ink-soft)]" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)]"
+                type="password"
+                name="pass2Input"
+                [value]="password2()"
+                (input)="password2.set(txtPass2.value)"
+                placeholder="Confirmar Contraseña"
+                #txtPass2
+              />
+            </div>
+          }
+          @if (typeForm() != 'login') {
+            <div class="flex items-center border-2 border-[var(--color-border)] py-2 px-3 rounded-2xl focus-within:border-[var(--color-accent)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ink-soft)]" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+              </svg>
+              <input
+                class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)]"
+                type="password"
+                name="keyInput"
+                maxlength="15"
+                [value]="customerKey()"
+                (input)="customerKey.set(txtKey.value)"
+                placeholder="Clave de cliente (15 caracteres)"
+                #txtKey
+              />
+            </div>
+          }
+          @if (descriptionErrors().length > 0) {
+            <div class="mt-4">
+              <div class="bg-red-50 border-l-8 border-[var(--color-accent)] rounded-r-lg">
                 <div class="flex items-center">
-                  <div class="ml-2">
-                    <svg class="h-8 w-8 text-[#8C2626] mr-2 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                  <div class="p-2">
+                    <div class="flex items-center">
+                      <div class="ml-2">
+                        <svg class="h-8 w-8 text-[var(--color-accent)] mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                      <p class="pr-4 py-4 text-[var(--color-accent)] font-semibold">Para continuar revisa los errores:</p>
+                    </div>
+                    <ul class="pl-4 pr-4 mb-4 list-disc list-inside">
+                      @for (description of descriptionErrors(); track description) {
+                        <li class="font-semibold text-red-800 text-sm">{{description}}</li>
+                      }
+                    </ul>
                   </div>
-                  <p class="px-6 py-4 text-[#8C2626] font-semibold text-lg">Para continuar revisa los errores:</p>
-                </div>
-                <div class="px-16 mb-4">
-                  @for (description of descriptionErrors(); track description) {
-                    <li class="text-md font-bold text-red-800 text-sm">{{description}}</li>
-                  }
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      }
-      @if (descriptionSuccess() != '') {
-        <div class="max-w-4xl mx-auto mt-4">
-          <div class="bg-green-50 border-l-8 border-[#3B9C32]">
-            <div class="flex items-center">
-              <div class="p-2">
-                <div class="px-16">
-                  <li class="text-md font-bold text-green-800 text-sm">{{descriptionSuccess()}}</li>
+          }
+          @if (descriptionSuccess() != '') {
+            <div class="mt-4">
+              <div class="bg-green-50 border-l-8 border-green-600 rounded-r-lg">
+                <div class="flex items-center">
+                  <div class="p-2">
+                    <div class="px-4">
+                      <p class="font-semibold text-green-800 text-sm">{{descriptionSuccess()}}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          }
+          <button
+            type="button"
+            (click)="submitForm()"
+            class="block w-full cursor-pointer mt-6 py-2.5 rounded-2xl text-[var(--color-ink-invert)] font-semibold bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors mb-3">
+            {{ buttonText() }}
+          </button>
+          <div class="flex flex-col gap-1.5">
+            @if (typeForm() !== 'forgot') {
+              <span
+                (click)="changeForm('forgot')"
+                class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] cursor-pointer">
+                ¿Olvidaste tu contraseña?
+              </span>
+            }
+            @if (typeForm() !== 'register') {
+              <span
+                (click)="changeForm('register')"
+                class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] cursor-pointer">
+                ¿No tienes cuenta? Regístrate
+              </span>
+            }
+            @if (typeForm() !== 'login') {
+              <span
+                (click)="changeForm('login')"
+                class="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] cursor-pointer">
+                Iniciar sesión
+              </span>
+            }
           </div>
-        </div>
-      }
-      <button
-        type="button"
-        (click)="submitForm()"
-        class="block w-full hover:bg-[#C93636] bg-[#8C2626] cursor-pointer mt-4 py-2 rounded-2xl text-white font-semibold mb-2">
-        {{ buttonText() }}
-      </button>
-      @if (typeForm() !== 'forgot') {
-        <span
-          (click)="changeForm('forgot')"
-          class="text-sm ml-2 hover:text-[#8C2626] cursor-pointer">
-          ¿Olvidaste tu contraseña?
-        </span>
-      }
-      @if (typeForm() !== 'register') {
-        <span
-          (click)="changeForm('register')"
-          class="text-sm ml-2 hover:text-[#8C2626] cursor-pointer">
-          ¿No tienes cuenta?
-        </span>
-      }
-      @if (typeForm() !== 'login') {
-        <span
-        (click)="changeForm('login')"
-        class="text-sm ml-2 hover:text-[#8C2626] cursor-pointer">
-        Iniciar sesión
-        </span>
-      }
-		</form>
-	</div>
-</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main-footer />
