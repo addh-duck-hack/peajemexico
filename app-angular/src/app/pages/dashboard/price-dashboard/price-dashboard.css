@@ -2,26 +2,21 @@
   display: block;
 }
 
-.price-form>div>input::placeholder {
-  color: #D7D7D9; /* Cambiar por el color deseado */
-  opacity: 1; /* Opcional: Firefox reduce la opacidad por defecto */
+.price-content-input {
+  border: 1.5px solid var(--color-border);
+  transition: border-color 0.15s ease;
 }
 
-/* Prefijos para compatibilidad con versiones antiguas */
-.price-form>div>input::-webkit-input-placeholder { color: #D7D7D9; } /* Chrome, Safari, Edge antiguo */
-.price-form>div>input::-moz-placeholder { color: #D7D7D9; } /* Firefox 19+ */
-.price-form>div>input:-moz-placeholder { color: #D7D7D9; } /* Firefox 4 a 18 */
-.price-form>div>input:-ms-input-placeholder { color: #D7D7D9; } /* Internet Explorer 10+ y Edge antiguo */
-
-.price-content-input {
-  border: 2px solid #575757;
+.price-content-input:focus-within {
+  border-color: var(--color-accent);
 }
 
 .price-rounded {
-  border-radius: 5px;
+  border-radius: 0.5rem;
 }
 .price-form-icon {
-  color: #D7D7D9;
+  color: var(--color-ink-soft);
+  margin-right: 0.25rem;
 }
 
 .price-no-margin {

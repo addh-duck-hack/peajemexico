@@ -1,4 +1,4 @@
-<div class="flex p-4 w-full bg-white shadow-sm rounded mb-4">
+<div class="flex p-4 w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl mb-4">
   <div
   [class]="'flex items-center justify-center h-12 w-12 rounded-xl text-[' + dataCost().iconColor +']'"
   [style]="'background-color: ' + dataCost().bgColor"
@@ -6,14 +6,14 @@
     <i [class]="dataCost().icon"></i>
   </div>
   <div class="flex flex-col flex-grow ml-4">
-    <div class="text-sm text-gray-500">
+    <div class="text-sm text-[var(--color-ink-soft)]">
       <b>{{dataCost().titleStrong}}</b>{{dataCost().title}}
     </div>
-    <div class="font-bold text-lg">{{dataCost().value}}</div>
-    <div class="font-bold text-lg">{{dataCost().subValue}}</div>
+    <div class="font-bold text-lg text-[var(--color-ink)]">{{dataCost().value}}</div>
+    <div class="font-bold text-lg text-[var(--color-ink)]">{{dataCost().subValue}}</div>
     @if (dataCost().btnDetail) {
       <a
-      class="detail-cost-item text-right cursor-pointer hover:text-[#C93636] text-[#8C2626]"
+      class="detail-cost-item text-right cursor-pointer text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
       (click)="openDetail.emit(true)">
         <i class="fa-solid fa-circle-info"></i>
       </a>

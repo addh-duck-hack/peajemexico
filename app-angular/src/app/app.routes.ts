@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/legal/legal')
   },
   {
+    path: 'calcular-mi-ruta',
+    loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard')
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login')
   },
@@ -32,10 +36,6 @@ export const routes: Routes = [
       {
         path: 'home',
         loadComponent: () => import('./pages/dashboard/home-dashboard/home-dashboard'),
-      },
-      {
-        path: 'price',
-        loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard'),
       },
       {
         path: 'history',

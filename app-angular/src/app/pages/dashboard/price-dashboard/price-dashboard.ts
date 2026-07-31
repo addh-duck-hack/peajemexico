@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { InegiService } from 'src/app/services/inegi.service';
 import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
@@ -11,10 +10,12 @@ import { DataCostInegi } from 'src/app/shared/interfaces/route.cost.interface';
 import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.interface';
 import { DetailCostItem } from 'src/app/shared/components/dashboard/detail-cost-item/detail-cost-item';
 import { DataDetailCostInegi } from 'src/app/shared/interfaces/detail-route.cost.interface';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
   selector: 'price-dashboard',
-  imports: [SkeletonContentLoader, DetailCostItem],
+  imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter],
   templateUrl: './price-dashboard.html',
   styleUrl: './price-dashboard.css'
 })
@@ -63,7 +64,6 @@ export default class PriceDashboard implements AfterViewInit{
   //Variables para consumo de servicios
   inegiService = inject(InegiService);
   userService = inject(UserService);
-  router = inject(Router)
 
   // Variables para Leaflet para los mapas
   private map!: L.Map;
@@ -340,17 +340,12 @@ export default class PriceDashboard implements AfterViewInit{
     }
   }
 
-  // Obeter token de la sesión actual del usuario
+  // Obtener token de la sesión actual del usuario (los endpoints de calculo son públicos, por lo que un visitante sin sesión también puede consumirlos)
   getSessionToken():string {
-    // Validamos que el token esta vigente para poder hacer la consulta
     if(this.userService.isTokenValid()){
       return this.userService.sessionUser()?.token || ""
-    }else{
-      // Si el token ya expiro, cerramos la sesion y mandamos a pagina principal
-      this.userService.clearSession();
-      this.router.navigate(['/']);
-      return ""
     }
+    return ""
   }
 
   // Funciones para los selects
@@ -479,8 +474,8 @@ export default class PriceDashboard implements AfterViewInit{
     // Cuando ya se setearon las variables, construimos el listado de los elemenos a mostrar
     let tollCost: DetailCostData = {
       id: 1,
-      bgColor: '#f26a525b',
-      iconColor: '#8C2626',
+      bgColor: 'var(--color-accent-soft)',
+      iconColor: 'var(--color-accent)',
       icon: 'fa-solid fa-hand-holding-dollar',
       titleStrong: '',
       title: titleTolls,
@@ -490,8 +485,8 @@ export default class PriceDashboard implements AfterViewInit{
     };
     let longKms: DetailCostData = {
       id: 2,
-      bgColor: '#f26a525b',
-      iconColor: '#8C2626',
+      bgColor: 'var(--color-accent-soft)',
+      iconColor: 'var(--color-accent)',
       icon: 'fa-solid fa-route',
       titleStrong: '',
       title: 'Total de kilometros',
@@ -501,8 +496,8 @@ export default class PriceDashboard implements AfterViewInit{
     };
     let totalTime: DetailCostData = {
       id: 3,
-      bgColor: '#f26a525b',
-      iconColor: '#8C2626',
+      bgColor: 'var(--color-accent-soft)',
+      iconColor: 'var(--color-accent)',
       icon: 'fa-solid fa-hourglass-half',
       titleStrong: '',
       title: 'Total de tiempo estimado',
@@ -512,8 +507,8 @@ export default class PriceDashboard implements AfterViewInit{
     };
     let warnings: DetailCostData = {
       id: 4,
-      bgColor: '#f26a525b',
-      iconColor: '#8C2626',
+      bgColor: 'var(--color-accent-soft)',
+      iconColor: 'var(--color-accent)',
       icon: 'fa-solid fa-triangle-exclamation',
       titleStrong: '',
       title: 'Advertencias en la ruta',
@@ -600,8 +595,8 @@ export default class PriceDashboard implements AfterViewInit{
         const icon = element.eje_excedente == 0 ? 'fa-solid fa-hand-holding-dollar' : 'fa-solid fa-truck-moving';
         let tollCost: DetailCostData = {
           id: newListPoints.length,
-          bgColor: '#f26a525b',
-          iconColor: '#8C2626',
+          bgColor: 'var(--color-accent-soft)',
+          iconColor: 'var(--color-accent)',
           icon: icon,
           titleStrong: (newListPoints.length + 1) + '.-',
           title: element.direccion,
