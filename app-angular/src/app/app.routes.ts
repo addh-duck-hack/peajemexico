@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/legal/legal')
   },
   {
+    path: 'privacidad',
+    loadComponent: () => import('./pages/privacy-policy/privacy-policy')
+  },
+  {
     path: 'calcular-mi-ruta',
     loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard')
   },

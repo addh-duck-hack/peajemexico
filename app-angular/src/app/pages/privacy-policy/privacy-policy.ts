@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
-  selector: 'legal',
-  imports: [Navbar, MainFooter, RouterLink],
-  templateUrl: './legal.html',
-  styleUrl: './legal.css',
+  selector: 'privacy-policy',
+  imports: [Navbar, MainFooter],
+  templateUrl: './privacy-policy.html',
+  styleUrl: './privacy-policy.css',
 })
-export default class Legal { }
+export default class PrivacyPolicy { }
