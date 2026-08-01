@@ -38,7 +38,6 @@ export default class Login {
   email = signal('');
   password = signal('');
   password2 = signal('');
-  customerKey = signal('');
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
@@ -110,9 +109,6 @@ export default class Login {
     if (!this.password()) {
       errors.push('La contraseña es requerida');
     }
-    if (!this.customerKey()) {
-      errors.push('La clave de cliente es requerida');
-    }
 
     // Validar que el name tenga al menos 5 caracteres
     if (this.name() && this.name().length < 5) {
@@ -137,11 +133,6 @@ export default class Login {
       errors.push('Las contraseñas no coinciden');
     }
 
-    // Validar que customerKey tenga exactamente 15 caracteres
-    if (this.customerKey() && this.customerKey().length !== 15) {
-      errors.push('La clave de cliente debe tener exactamente 15 caracteres, si no cuentas con ella comunicate con tu administrador para que te la proporcione');
-    }
-
     // Si hay errores, almacenarlos y retornar
     if (errors.length > 0) {
       this.descriptionErrors.set(errors);
@@ -152,7 +143,7 @@ export default class Login {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
-    this.userService.registerNewUser(this.name(),this.email(), this.password(), this.customerKey()).subscribe({
+    this.userService.registerNewUser(this.name(),this.email(), this.password()).subscribe({
       next: (response) => {
         // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
         if (response.message){
@@ -164,7 +155,6 @@ export default class Login {
         this.email.set("");
         this.password.set("");
         this.password2.set("");
-        this.customerKey.set("");
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
@@ -227,9 +217,6 @@ export default class Login {
     if (!this.email()) {
       errors.push('El email es requerido');
     }
-    if (!this.customerKey()) {
-      errors.push('La clave de cliente es requerida');
-    }
 
     // Validar que el email tenga un formato válido
     if (this.email()) {
@@ -239,11 +226,6 @@ export default class Login {
       }
     }
 
-    // Validar que customerKey tenga exactamente 15 caracteres
-    if (this.customerKey() && this.customerKey().length !== 15) {
-      errors.push('La clave de cliente debe tener exactamente 15 caracteres, si no cuentas con ella comunicate con tu administrador para que te la proporcione');
-    }
-
     // Si hay errores, almacenarlos y retornar
     if (errors.length > 0) {
       this.descriptionErrors.set(errors);
@@ -251,11 +233,10 @@ export default class Login {
     }
 
     // Si todas las validaciones pasaron, continuar con el reseteo de contraseña
-    this.userService.forgotPassword(this.email(), this.customerKey()).subscribe({
+    this.userService.forgotPassword(this.email()).subscribe({
       next: (response) => {
         // Se limpian los campos y se muestra el mensaje desde el servidor
         this.email.set("");
-        this.customerKey.set("");
         this.descriptionSuccess.set(response.message);
       },
       error: (error: HttpErrorResponse) => {

@@ -59,12 +59,11 @@ export class UserService {
     return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/login`,bodyRequest);
   }
 
-  registerNewUser(name:string, email:string, pass:string, key:string):Observable<UserResponse> {
+  registerNewUser(name:string, email:string, pass:string):Observable<UserResponse> {
     const bodyRequest = {
       name: name,
       email: email,
-      password: pass,
-      customerKey: key
+      password: pass
     };
     return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/register`,bodyRequest);
   }
@@ -77,10 +76,9 @@ export class UserService {
     });
   }
 
-  forgotPassword(email:String, key:string): Observable<UserResponse>{
+  forgotPassword(email:String): Observable<UserResponse>{
     const bodyRequest = {
-      email: email,
-      customerKey: key
+      email: email
     };
     return this.http.post<UserResponse>(`${ this.env.urlbackend }/api/ds/users/forgot-password`,bodyRequest);
   }

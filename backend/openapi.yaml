@@ -9,7 +9,7 @@ info:
     contacto por correo.
 
 
-    **Estado de montaje (2026-07-29):** no todos los routers definidos en el
+    **Estado de montaje (2026-08-01):** no todos los routers definidos en el
     código están activos en `server.js`. Cada operación de abajo indica su
     estado real vía la extensión `x-status`:
     - `live`: montado y accesible hoy.
@@ -22,13 +22,17 @@ info:
     - Los prefijos reales de montaje son `/api/ds/...` (ver `server.js`), no
       `/api/users/...` / `/api/mail/...` / `/api/uploads/...` como sugería una
       versión previa de este documento.
-    - `user.routes.js` y `upload.routes.js` referencian los roles
-      `store_admin` y `catalog_manager` en `authorizeRoles(...)`, pero
-      `middleware/authMiddleware.js` (fuente de verdad) solo define los roles
-      `super_admin` y `customer` (igual que el enum de `models/user.model.js`).
-      Mientras no se agreguen esos roles al sistema de auth, cualquier
-      endpoint que dependa de ellos responderá siempre `500
-      RBAC_CONFIGURATION_INVALID` en cuanto se monten.
+    - `user.routes.js` (ahora `live`) y `upload.routes.js` (aún
+      `not-mounted`) referencian los roles `store_admin` y `catalog_manager`
+      en `authorizeRoles(...)`, pero `middleware/authMiddleware.js` (fuente
+      de verdad) solo define los roles `super_admin` y `customer` (igual que
+      el enum de `models/user.model.js`). Como `user.routes.js` ya está
+      montado, esto es un bug activo hoy, no solo teórico: `GET
+      /api/ds/users` y `DELETE /api/ds/users/{id}` responden siempre `500
+      RBAC_CONFIGURATION_INVALID` sin importar el rol de quien llame, y `PUT
+      /api/ds/users/{id}` falla igual salvo que el usuario se edite a sí
+      mismo. Pendiente decidir si se agrega `store_admin` a `ROLES` o si
+      estas rutas deben exigir solo `super_admin`.
     - `validationMiddleware.js` expone `validateStoreConfigPayload`
       (storeName/storeSlug/theme/homeBlocks) sin ningún router que lo
       consuma; parece código heredado de otro proyecto (tienda
@@ -43,9 +47,9 @@ servers:
     description: Backend vía docker-compose (mapeado 106->5000)
 tags:
   - name: Auth
-    description: Registro, login y ciclo de vida de cuenta (user.routes.js) — not-mounted
+    description: Registro, login y ciclo de vida de cuenta (user.routes.js) — live
   - name: Users
-    description: Gestión de usuarios (user.routes.js) — not-mounted
+    description: Gestión de usuarios (user.routes.js) — live
   - name: Destinations
     description: Autocomplete de origen/destino vía INEGI — live
   - name: RouteCost
@@ -198,15 +202,14 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   # ---------------------------------------------------------------------
-  # Auth / Users (not-mounted) — /api/ds/users
+  # Auth / Users (live) — /api/ds/users
   # ---------------------------------------------------------------------
   /api/ds/users/register:
     post:
       tags: [Auth]
       summary: Registrar usuario customer
-      x-status: not-mounted
+      x-status: live
       description: >
-        Requiere `customerKey` igual a la variable de entorno `CUSTOMER_KEY`.
         Envía correo de verificación con un token `email_verification`
         (24h) hacia `${FRONTEND_URL}/users/verify?token=...`.
       requestBody:
@@ -224,12 +227,6 @@ paths:
                 $ref: "#/components/schemas/RegisterResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "403":
-          description: Clave de cliente inválida
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "409":
           $ref: "#/components/responses/EmailAlreadyRegistered"
         "429":
@@ -241,7 +238,7 @@ paths:
     get:
       tags: [Auth]
       summary: Verificar cuenta por token de correo
-      x-status: not-mounted
+      x-status: live
       parameters:
         - in: query
           name: token
@@ -268,10 +265,10 @@ paths:
     post:
       tags: [Auth]
       summary: Solicitar enlace de recuperación de contraseña
-      x-status: not-mounted
+      x-status: live
       description: >
-        Requiere `customerKey` igual a `CUSTOMER_KEY`. Envía token
-        `reset_password` hacia `${FRONTEND_URL}/reset-password?token=...`.
+        Envía token `reset_password` hacia
+        `${FRONTEND_URL}/reset-password?token=...`.
       requestBody:
         required: true
         content:
@@ -287,12 +284,6 @@ paths:
                 $ref: "#/components/schemas/MessageResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "403":
-          description: Clave de cliente inválida
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "404":
           $ref: "#/components/responses/UserNotFound"
         "500":
@@ -302,7 +293,7 @@ paths:
     post:
       tags: [Auth]
       summary: Cambiar contraseña con token de reset
-      x-status: not-mounted
+      x-status: live
       requestBody:
         required: true
         content:
@@ -329,7 +320,7 @@ paths:
     post:
       tags: [Auth]
       summary: Iniciar sesión
-      x-status: not-mounted
+      x-status: live
       requestBody:
         required: true
         content:
@@ -366,10 +357,12 @@ paths:
     get:
       tags: [Users]
       summary: Listar usuarios
-      x-status: not-mounted
+      x-status: live
       x-known-issue: >
         Requiere rol store_admin o super_admin; store_admin no existe en
-        authMiddleware.js hoy (ver Known issues en info.description).
+        authMiddleware.js hoy, así que este endpoint responde siempre 500
+        RBAC_CONFIGURATION_INVALID sin importar el rol de quien llame (ver
+        Known issues en info.description).
       security:
         - bearerAuth: []
       responses:
@@ -392,7 +385,7 @@ paths:
     get:
       tags: [Users]
       summary: Obtener usuario por id (self o admin)
-      x-status: not-mounted
+      x-status: live
       security:
         - bearerAuth: []
       parameters:
@@ -418,10 +411,13 @@ paths:
     put:
       tags: [Users]
       summary: Actualizar usuario (datos generales y/o rol)
-      x-status: not-mounted
+      x-status: live
       x-known-issue: >
         Permite asignar rol store_admin, que no existe en authMiddleware.js
-        hoy (ver Known issues en info.description).
+        hoy. Además, si quien llama no es el propio usuario editado, la
+        autorización cae en authorizeRoles(store_admin, super_admin) y
+        responde siempre 500 RBAC_CONFIGURATION_INVALID (ver Known issues en
+        info.description).
       description: >
         No permite cambiar email. Soporta multipart/form-data para
         profileImage. El archivo se valida por contenido real (no solo
@@ -457,10 +453,12 @@ paths:
     delete:
       tags: [Users]
       summary: Eliminar usuario por id
-      x-status: not-mounted
+      x-status: live
       x-known-issue: >
         Requiere rol store_admin o super_admin; store_admin no existe en
-        authMiddleware.js hoy (ver Known issues en info.description).
+        authMiddleware.js hoy, así que este endpoint responde siempre 500
+        RBAC_CONFIGURATION_INVALID sin importar el rol de quien llame (ver
+        Known issues en info.description).
       security:
         - bearerAuth: []
       parameters:
@@ -487,7 +485,7 @@ paths:
     patch:
       tags: [Users]
       summary: Cambiar contraseña del usuario autenticado (solo dueño)
-      x-status: not-mounted
+      x-status: live
       security:
         - bearerAuth: []
       parameters:
@@ -727,10 +725,7 @@ components:
         password:
           type: string
           minLength: 6
-        customerKey:
-          type: string
-          description: Debe coincidir con la variable de entorno CUSTOMER_KEY.
-      required: [name, email, password, customerKey]
+      required: [name, email, password]
 
     RegisterResponse:
       type: object
@@ -747,9 +742,7 @@ components:
         email:
           type: string
           format: email
-        customerKey:
-          type: string
-      required: [email, customerKey]
+      required: [email]
 
     ResetPasswordRequest:
       type: object
