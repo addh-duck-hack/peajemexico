@@ -1,24 +1,6 @@
 version: "3.7"
 services:
-  peajemx-frontend:
-    build:
-      context: .
-      dockerfile: ./app-angular/Dockerfile
-    container_name: peajemx-frontend
-    restart: always
-    networks:
-      - npm
-      - peajemx-frontend-net
-  peajemx-services:
-    build: ./backend
-    container_name: peajemx-services
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    restart: always
-    networks:
-      - npm
-      - peajemx-services-net
+
 
 networks:
   peajemx-frontend-net:
