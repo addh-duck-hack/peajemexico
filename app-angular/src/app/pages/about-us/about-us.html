@@ -1,7 +1,7 @@
 <navbar />
 
-<main>
-  <section class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+<main class="bg-[var(--color-bg)]">
+  <section class="border-b border-[var(--color-border)]">
     <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
       <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
         Sobre nosotros
@@ -14,19 +14,74 @@
     </div>
   </section>
 
-  <section class="bg-[var(--color-bg)]">
-    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 space-y-6 text-[var(--color-ink-soft)]">
-      <p>
+  <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+    <div class="max-w-3xl">
+      <h2 class="text-xl font-semibold text-[var(--color-ink)]">Cómo funciona</h2>
+      <p class="mt-3 text-[var(--color-ink-soft)]">
         Nuestro objetivo es simple: que cualquier persona pueda calcular el costo total de las casetas de su viaje,
         con uno o varios destinos, ajustado al tipo de vehículo que utiliza, sin sorpresas al llegar a la carretera.
       </p>
-      <p>
-        Usamos información pública de la red de carreteras de México para estimar el costo, la distancia y el tiempo
-        de cada tramo de tu ruta, mostrando el detalle por caseta directamente sobre el mapa.
+      <p class="mt-3 text-[var(--color-ink-soft)]">
+        Los costos y las rutas se calculan con datos de la
+        <a
+          href="https://www.inegi.org.mx/servicios/Ruteo/Default.html"
+          target="_blank"
+          rel="noreferrer"
+          class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">
+          API de Ruteo del INEGI
+        </a>
+        (Instituto Nacional de Estadística y Geografía), consultada en tiempo real para cada búsqueda, y el
+        detalle de cada caseta se muestra sobre un mapa interactivo con
+        <a
+          href="https://leafletjs.com/"
+          target="_blank"
+          rel="noreferrer"
+          class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">
+          Leaflet
+        </a>
+        y datos de
+        <a
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noreferrer"
+          class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">
+          OpenStreetMap
+        </a>.
       </p>
-      <p>
-        La calculadora es de uso gratuito y no requiere crear una cuenta. Si buscas hacer consultas de forma más
-        frecuente, revisa nuestros <a routerLink="/servicios" class="text-[var(--color-accent)] hover:underline">planes y servicios</a>.
+
+      <h2 class="mt-10 text-xl font-semibold text-[var(--color-ink)]">Niveles de acceso</h2>
+      <p class="mt-3 text-[var(--color-ink-soft)]">
+        La calculadora es de uso gratuito y no requiere crear una cuenta: cualquier persona puede calcular el
+        costo de casetas de su ruta con un límite de 30 consultas cada 10 minutos por dirección IP. Si buscas
+        hacer consultas de forma más frecuente, una cuenta registrada amplía ese límite a 500 consultas cada 10
+        minutos, también sin costo, y para uso vía API existe una cuenta empresarial con condiciones a la medida.
+        Puedes ver el detalle completo en
+        <a routerLink="/servicios" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">planes y servicios</a>.
+      </p>
+
+      <h2 class="mt-10 text-xl font-semibold text-[var(--color-ink)]">¿Quién está detrás de PeajesMX?</h2>
+      <p class="mt-3 text-[var(--color-ink-soft)]">
+        PeajesMX es operado por
+        <a href="https://mx.duck-hack.cloud" target="_blank" rel="noreferrer" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">Duck Hack</a>,
+        un desarrollador de software y aplicaciones web con sede en Hidalgo, México. Este sitio es un servicio
+        independiente y no está afiliado al INEGI, a Caminos y Puentes Federales (CAPUFE) ni a la Secretaría de
+        Infraestructura, Comunicaciones y Transportes (SICT). Puedes conocer más detalles legales de la operación
+        del sitio en nuestro
+        <a routerLink="/legales" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">Aviso Legal</a>.
+      </p>
+
+      <h2 class="mt-10 text-xl font-semibold text-[var(--color-ink)]">Tus datos</h2>
+      <p class="mt-3 text-[var(--color-ink-soft)]">
+        Los datos de la ruta que consultas (origen, destino y tipo de vehículo) se usan únicamente para calcular
+        el costo de casetas y no se almacenan de forma permanente ni se asocian a tu identidad; tu dirección IP
+        solo se usa para aplicar el límite de consultas y evitar abusos del servicio. Puedes revisar el detalle
+        completo en nuestro
+        <a routerLink="/privacidad" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">Aviso de Privacidad</a>.
+      </p>
+
+      <p class="mt-10 text-[var(--color-ink-soft)]">
+        ¿Tienes dudas o comentarios? Escríbenos desde nuestra página de
+        <a routerLink="/contacto" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">contacto</a>.
       </p>
     </div>
   </section>
