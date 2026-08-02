@@ -27,29 +27,11 @@ export const routes: Routes = [
   },
   {
     path: 'calcular-mi-ruta',
-    loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard')
+    loadComponent: () => import('./pages/price-calculator/price-calculator')
   },
   {
     path: 'login',
     loadComponent: () => import('./auth/login/login')
-  },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard'),
-    children:[
-      {
-        path: 'home',
-        loadComponent: () => import('./pages/dashboard/home-dashboard/home-dashboard'),
-      },
-      {
-        path: 'history',
-        loadComponent: () => import('./pages/dashboard/history-dashboard/history-dashboard'),
-      },
-      {
-        path: '**',
-        redirectTo: 'home'
-      }
-    ]
   },
   {
     path: 'users/verify',

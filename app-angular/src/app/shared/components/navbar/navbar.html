@@ -28,7 +28,26 @@
             {{item.name}}
           </a>
         }
-        @if (onCalculatorRoute()) {
+        @if (sessionUser(); as session) {
+          <div class="relative mt-3 md:mt-0 md:ml-4">
+            <button
+              type="button"
+              (click)="toggleUserMenu()"
+              class="w-full px-4 py-2 text-sm font-semibold text-center rounded-lg text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">
+              Hola, {{ session.user.name }}
+            </button>
+            @if (userMenuOpen()) {
+              <div class="absolute right-0 z-50 mt-2 w-44 rounded-lg shadow-lg background-navbar">
+                <button
+                  type="button"
+                  (click)="logout()"
+                  class="w-full px-4 py-2 text-sm text-left rounded-lg text-main hover:text-[var(--color-accent)]">
+                  Cerrar sesión
+                </button>
+              </div>
+            }
+          </div>
+        } @else if (onCalculatorRoute()) {
           <a
             routerLink="/login"
             class="mt-3 md:mt-0 md:ml-4 px-4 py-2 text-sm font-semibold text-center rounded-lg text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">

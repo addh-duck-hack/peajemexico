@@ -4,6 +4,7 @@ import { environment } from '@environments/environment';
 import { NavbarItem } from '../../interfaces/navbar-item.interface';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'navbar',
@@ -16,6 +17,8 @@ export class Navbar {
   logo = 'images/logo-mark.svg';
   env = environment;
   private router = inject(Router);
+  private userService = inject(UserService);
+  sessionUser = this.userService.sessionUser;
 
   menuOptions:NavbarItem[] = [
     { id: 1, name: 'Inicio', route: '/' },
@@ -27,11 +30,15 @@ export class Navbar {
   openMobile = signal(false)
   classMobileMenu = signal('flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:items-center md:justify-end md:flex-row')
   onCalculatorRoute = signal(this.router.url.startsWith('/calcular-mi-ruta'));
+  userMenuOpen = signal(false);
 
   constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => this.onCalculatorRoute.set(this.router.url.startsWith('/calcular-mi-ruta')));
+      .subscribe(() => {
+        this.onCalculatorRoute.set(this.router.url.startsWith('/calcular-mi-ruta'));
+        this.userMenuOpen.set(false);
+      });
   }
 
   toggleMenuMobile(){
@@ -41,5 +48,15 @@ export class Navbar {
       this.classMobileMenu.set('flex flex-col flex-grow pb-4 md:pb-0 md:flex md:items-center md:justify-end md:flex-row');
     }
     this.openMobile.set(!this.openMobile());
+  }
+
+  toggleUserMenu(){
+    this.userMenuOpen.set(!this.userMenuOpen());
+  }
+
+  logout(){
+    this.userService.clearSession();
+    this.userMenuOpen.set(false);
+    this.router.navigate(['/']);
   }
 }

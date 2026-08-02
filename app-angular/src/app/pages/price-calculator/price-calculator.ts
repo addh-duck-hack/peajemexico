@@ -8,19 +8,19 @@ import { GeoJsonObject } from 'geojson';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
 import { DataCostInegi } from 'src/app/shared/interfaces/route.cost.interface';
 import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.interface';
-import { DetailCostItem } from 'src/app/shared/components/dashboard/detail-cost-item/detail-cost-item';
+import { DetailCostItem } from './detail-cost-item/detail-cost-item';
 import { DataDetailCostInegi } from 'src/app/shared/interfaces/detail-route.cost.interface';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
-  selector: 'price-dashboard',
+  selector: 'price-calculator',
   imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter],
-  templateUrl: './price-dashboard.html',
-  styleUrl: './price-dashboard.css'
+  templateUrl: './price-calculator.html',
+  styleUrl: './price-calculator.css'
 })
 
-export default class PriceDashboard implements AfterViewInit{
+export default class PriceCalculator implements AfterViewInit{
   // Variables para el origen
   origen = signal('');
   errorOrigen = signal('');

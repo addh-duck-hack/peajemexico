@@ -49,7 +49,7 @@ export default class Login {
 
   constructor(){
     if(this.userService.isTokenValid()){
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/calcular-mi-ruta']);
     }
   }
 
@@ -199,8 +199,8 @@ export default class Login {
         // Guardar la sesión del usuario
         this.userService.saveSession(response);
         this.descriptionSuccess.set(response.message);
-        // Redirigir al dashboard
-        this.router.navigate(['/dashboard']);
+        // Redirigir a la calculadora con la sesión ya iniciada
+        this.router.navigate(['/calcular-mi-ruta']);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
