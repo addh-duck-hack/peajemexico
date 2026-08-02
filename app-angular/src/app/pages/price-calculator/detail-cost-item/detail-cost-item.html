@@ -13,7 +13,7 @@
     <div class="font-bold text-lg text-[var(--color-ink)]">{{dataCost().subValue}}</div>
     @if (dataCost().btnDetail) {
       <a
-      class="detail-cost-item text-right cursor-pointer text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
+      [class]="'detail-cost-item text-right text-[var(--color-accent)] ' + (disabled() ? 'opacity-50 pointer-events-none cursor-not-allowed' : 'cursor-pointer hover:text-[var(--color-accent-hover)]')"
       (click)="openDetail.emit(true)">
         <i class="fa-solid fa-circle-info"></i>
       </a>

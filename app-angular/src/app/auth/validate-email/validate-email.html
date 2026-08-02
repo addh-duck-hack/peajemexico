@@ -16,8 +16,12 @@
 
           <button
             type="button"
+            [disabled]="loading()"
             (click)="validateEmail()"
-            class="block w-full cursor-pointer py-2.5 rounded-2xl text-[var(--color-ink-invert)] font-semibold bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">
+            class="flex items-center justify-center w-full cursor-pointer py-2.5 rounded-2xl text-[var(--color-ink-invert)] font-semibold bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (loading()) {
+              <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+            }
             Validar correo
           </button>
 

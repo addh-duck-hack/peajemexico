@@ -41,6 +41,8 @@ export default class Login {
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
+  // Bandera para bloquear el formulario mientras se consume algún servicio
+  loading = signal(false);
 
   // Consumo de servicios
   userService = inject(UserService)
@@ -54,6 +56,7 @@ export default class Login {
   }
 
   changeForm(type: string) {
+    if (this.loading()) return;
     this.typeForm.set(type);
     this.descriptionErrors.set([]);
     this.descriptionSuccess.set("");
@@ -79,6 +82,7 @@ export default class Login {
   }
 
   submitForm() {
+    if (this.loading()) return;
     switch(this.typeForm()){
       case 'login':
         this.loginUser();
@@ -143,6 +147,7 @@ export default class Login {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
+    this.loading.set(true);
     this.userService.registerNewUser(this.name(),this.email(), this.password()).subscribe({
       next: (response) => {
         // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
@@ -155,10 +160,12 @@ export default class Login {
         this.email.set("");
         this.password.set("");
         this.password2.set("");
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }
@@ -194,16 +201,19 @@ export default class Login {
     console.log('Formulario válido, proceder con el login');
 
     // Cunsumir el servicio para registrar usuario
+    this.loading.set(true);
     this.userService.loginNewSession(this.email(), this.password()).subscribe({
       next: (response) => {
         // Guardar la sesión del usuario
         this.userService.saveSession(response);
         this.descriptionSuccess.set(response.message);
+        this.loading.set(false);
         // Redirigir a la calculadora con la sesión ya iniciada
         this.router.navigate(['/calcular-mi-ruta']);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }
@@ -233,14 +243,17 @@ export default class Login {
     }
 
     // Si todas las validaciones pasaron, continuar con el reseteo de contraseña
+    this.loading.set(true);
     this.userService.forgotPassword(this.email()).subscribe({
       next: (response) => {
         // Se limpian los campos y se muestra el mensaje desde el servidor
         this.email.set("");
         this.descriptionSuccess.set(response.message);
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }

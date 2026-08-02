@@ -28,6 +28,8 @@ export default class ResetPassword {
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
+  // Bandera para bloquear el formulario mientras se consume el servicio
+  loading = signal(false);
 
   // Consumo de servicios
   userService = inject(UserService);
@@ -40,6 +42,7 @@ export default class ResetPassword {
   }
 
   submitForm(){
+    if (this.loading()) return;
     // Limpiar errores previos
     this.descriptionErrors.set([]);
     this.descriptionSuccess.set("");
@@ -70,6 +73,7 @@ export default class ResetPassword {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
+    this.loading.set(true);
     this.userService.resetPassword(this.token(),this.password()).subscribe({
       next: (response) => {
         // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
@@ -80,10 +84,12 @@ export default class ResetPassword {
         }
         this.password.set("");
         this.password2.set("");
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }

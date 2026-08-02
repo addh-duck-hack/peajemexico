@@ -29,23 +29,16 @@
           </a>
         }
         @if (sessionUser(); as session) {
-          <div class="relative mt-3 md:mt-0 md:ml-4">
+          <div class="flex items-center gap-3 mt-3 md:mt-0 md:ml-4">
+            <span class="text-sm font-semibold text-main">Hola, {{ session.user.name }}</span>
             <button
               type="button"
-              (click)="toggleUserMenu()"
-              class="w-full px-4 py-2 text-sm font-semibold text-center rounded-lg text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">
-              Hola, {{ session.user.name }}
+              (click)="logout()"
+              title="Cerrar sesión"
+              aria-label="Cerrar sesión"
+              class="text-base text-main hover:text-[var(--color-accent)] transition-colors">
+              <i class="fa-solid fa-power-off"></i>
             </button>
-            @if (userMenuOpen()) {
-              <div class="absolute right-0 z-50 mt-2 w-44 rounded-lg shadow-lg background-navbar">
-                <button
-                  type="button"
-                  (click)="logout()"
-                  class="w-full px-4 py-2 text-sm text-left rounded-lg text-main hover:text-[var(--color-accent)]">
-                  Cerrar sesión
-                </button>
-              </div>
-            }
           </div>
         } @else if (onCalculatorRoute()) {
           <a

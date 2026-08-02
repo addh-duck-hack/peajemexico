@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { InegiService } from 'src/app/services/inegi.service';
 import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
@@ -60,6 +60,8 @@ export default class PriceCalculator implements AfterViewInit{
   detailsCostRoute = signal<DetailCostData[]>([]);
   elementsInListOfCost = signal<DetailCostData[]>([]);
   showDetails = signal(false);
+  // Bandera global para bloquear todos los botones del formulario mientras cualquier consulta esté en curso
+  isBusy = computed(() => this.origenLoading() || this.destinoLoading() || this.calculationLoading());
 
   //Variables para consumo de servicios
   inegiService = inject(InegiService);

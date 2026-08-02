@@ -30,15 +30,11 @@ export class Navbar {
   openMobile = signal(false)
   classMobileMenu = signal('flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:items-center md:justify-end md:flex-row')
   onCalculatorRoute = signal(this.router.url.startsWith('/calcular-mi-ruta'));
-  userMenuOpen = signal(false);
 
   constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.onCalculatorRoute.set(this.router.url.startsWith('/calcular-mi-ruta'));
-        this.userMenuOpen.set(false);
-      });
+      .subscribe(() => this.onCalculatorRoute.set(this.router.url.startsWith('/calcular-mi-ruta')));
   }
 
   toggleMenuMobile(){
@@ -50,13 +46,8 @@ export class Navbar {
     this.openMobile.set(!this.openMobile());
   }
 
-  toggleUserMenu(){
-    this.userMenuOpen.set(!this.userMenuOpen());
-  }
-
   logout(){
     this.userService.clearSession();
-    this.userMenuOpen.set(false);
     this.router.navigate(['/']);
   }
 }

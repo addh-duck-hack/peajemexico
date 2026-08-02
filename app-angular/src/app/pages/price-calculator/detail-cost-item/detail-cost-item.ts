@@ -10,5 +10,6 @@ import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.inter
 })
 export class DetailCostItem {
   dataCost = input.required<DetailCostData>();
+  disabled = input(false);
   openDetail = output<boolean>();
 }

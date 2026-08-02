@@ -116,7 +116,8 @@
             <button
               (click)="submitContactForm()"
               type="button"
-              class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 contact-rounded text-[var(--color-ink-invert)] font-semibold">
+              [disabled]="sendLoading()"
+              class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 contact-rounded text-[var(--color-ink-invert)] font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
               Enviar mensaje
             </button>
 

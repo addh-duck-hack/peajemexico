@@ -39,7 +39,8 @@
                       <button
                         (click)="validateOrigen()"
                         type="button"
-                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold">
+                        [disabled]="isBusy()"
+                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
                         {{botonOrigenTitulo()}}
                       </button>
                     </div>
@@ -84,7 +85,8 @@
                       <button
                         (click)="validateDestino()"
                         type="button"
-                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold">
+                        [disabled]="isBusy()"
+                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
                         Buscar
                       </button>
                     </div>
@@ -203,7 +205,8 @@
                     <button
                       (click)="validateFormToCalculation()"
                       type="button"
-                      class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2">
+                      [disabled]="isBusy()"
+                      class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
                       Obtener costos de casetas
                     </button>
                     @if (errorsFormCost().length > 0) {
@@ -230,7 +233,8 @@
                     <button
                       (click)="newCalculation()"
                       type="button"
-                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2">
+                      [disabled]="isBusy()"
+                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
                       Realizar otro calculo
                     </button>
                     <!-- Finaliza boton para nuevo calculo -->
@@ -241,7 +245,8 @@
                     <button
                       (click)="showDetailOfRoutes(false)"
                       type="button"
-                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2">
+                      [disabled]="isBusy()"
+                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
                       Ocultar detalles
                     </button>
                     <!-- Finaliza boton para nuevo calculo -->
@@ -259,12 +264,12 @@
               <div class="w-full mt-6">
                 @if (showDetails()) {
                   @for (itemCost of detailsCostRoute(); track itemCost.id) {
-                    <detail-cost-item [dataCost]="itemCost" (openDetail)="showDetailOfRoutes(true)"/>
+                    <detail-cost-item [dataCost]="itemCost" [disabled]="isBusy()" (openDetail)="showDetailOfRoutes(true)"/>
                   }
                 }
                 @else{
                   @for (itemCost of elementsInListOfCost(); track itemCost.id) {
-                    <detail-cost-item [dataCost]="itemCost" (openDetail)="showDetailOfRoutes(true)"/>
+                    <detail-cost-item [dataCost]="itemCost" [disabled]="isBusy()" (openDetail)="showDetailOfRoutes(true)"/>
                   }
                 }
               </div>

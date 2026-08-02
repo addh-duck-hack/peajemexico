@@ -25,6 +25,8 @@ export default class ValidateEmail {
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
+  // Bandera para bloquear el botón mientras se consume el servicio
+  loading = signal(false);
 
   // Consumo de servicios
   userService = inject(UserService);
@@ -37,14 +39,18 @@ export default class ValidateEmail {
   }
 
   validateEmail(){
+    if (this.loading()) return;
     console.log('Se va a validar el token: ' + this.token());
+    this.loading.set(true);
     this.userService.validateEmail(this.token()).subscribe({
       next: (response) => {
         // Guardar la sesión del usuario
         this.descriptionSuccess.set(response.message);
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     })
   }
