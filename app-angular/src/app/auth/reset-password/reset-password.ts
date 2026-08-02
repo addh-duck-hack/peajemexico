@@ -1,14 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '@environments/environment';
 import { map } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [RouterLink],
+  imports: [RouterLink, Navbar, MainFooter],
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.css'
 })
@@ -29,6 +31,13 @@ export default class ResetPassword {
 
   // Consumo de servicios
   userService = inject(UserService);
+  router = inject(Router);
+
+  constructor(){
+    if(!this.token()){
+      this.router.navigate(['/']);
+    }
+  }
 
   submitForm(){
     // Limpiar errores previos
