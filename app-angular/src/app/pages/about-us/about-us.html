@@ -1,2 +1,35 @@
 <navbar />
-<h1>About us</h1>
+
+<main>
+  <section class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+      <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+        Sobre nosotros
+      </span>
+      <h1 class="mt-4 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">¿Qué es PeajesMX?</h1>
+      <p class="mt-2 text-[var(--color-ink-soft)] max-w-2xl">
+        PeajesMX es una calculadora en línea que ayuda a viajeros, transportistas y empresas de logística a conocer
+        por adelantado el costo de las casetas de su ruta en México, antes de salir a carretera.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-[var(--color-bg)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 space-y-6 text-[var(--color-ink-soft)]">
+      <p>
+        Nuestro objetivo es simple: que cualquier persona pueda calcular el costo total de las casetas de su viaje,
+        con uno o varios destinos, ajustado al tipo de vehículo que utiliza, sin sorpresas al llegar a la carretera.
+      </p>
+      <p>
+        Usamos información pública de la red de carreteras de México para estimar el costo, la distancia y el tiempo
+        de cada tramo de tu ruta, mostrando el detalle por caseta directamente sobre el mapa.
+      </p>
+      <p>
+        La calculadora es de uso gratuito y no requiere crear una cuenta. Si buscas hacer consultas de forma más
+        frecuente, revisa nuestros <a routerLink="/servicios" class="text-[var(--color-accent)] hover:underline">planes y servicios</a>.
+      </p>
+    </div>
+  </section>
+</main>
+
+<main-footer />

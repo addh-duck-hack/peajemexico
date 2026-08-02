@@ -1,4 +1,5 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { UserResponse } from '../shared/interfaces/user.interface';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
@@ -10,19 +11,21 @@ import { Observable } from 'rxjs';
 
 export class UserService {
   private http = inject(HttpClient);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   env = environment;
   sessionUser = signal<UserResponse | null>(null);
 
   constructor() {
-    this.loadSession();
+    if (this.isBrowser) this.loadSession();
   }
 
   saveSession(user: UserResponse): void {
     this.sessionUser.set(user);
-    localStorage.setItem(this.env.localStorageName, JSON.stringify(user));
+    if (this.isBrowser) localStorage.setItem(this.env.localStorageName, JSON.stringify(user));
   }
 
   loadSession(): void {
+    if (!this.isBrowser) return;
     const data = localStorage.getItem(this.env.localStorageName);
     if (data) {
       const userResponse: UserResponse = JSON.parse(data);
@@ -36,7 +39,7 @@ export class UserService {
 
   clearSession(): void {
     this.sessionUser.set(null);
-    localStorage.removeItem(this.env.localStorageName);
+    if (this.isBrowser) localStorage.removeItem(this.env.localStorageName);
   }
 
   isTokenValid(token?: string): boolean {

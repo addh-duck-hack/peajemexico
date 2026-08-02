@@ -5,9 +5,11 @@
   <section class="relative overflow-hidden bg-[var(--color-bg)]">
     <div class="absolute inset-0 pointer-events-none">
       <img
-        src="images/hero-highway.jpg"
+        ngSrc="images/hero-highway.jpg"
+        fill
+        priority
         alt=""
-        class="absolute inset-0 w-full h-full object-cover opacity-50 md:opacity-90" />
+        class="object-cover opacity-50 md:opacity-90" />
       <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-bg)] via-[var(--color-bg)]/85 to-[var(--color-bg)]/40"></div>
     </div>
     <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
@@ -117,9 +119,10 @@
   <!-- CTA final -->
   <section class="relative overflow-hidden bg-[var(--color-ink)]">
     <img
-      src="images/cta-mountain-road.jpg"
+      ngSrc="images/cta-mountain-road.jpg"
+      fill
       alt=""
-      class="absolute inset-0 w-full h-full object-cover object-bottom opacity-20" />
+      class="object-cover object-bottom opacity-20" />
     <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20 text-center">
       <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink-invert)]">
         Planea tu próximo viaje con el costo claro desde antes de salir

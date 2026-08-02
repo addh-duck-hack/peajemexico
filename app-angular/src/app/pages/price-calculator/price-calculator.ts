@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, afterNextRender } from '@angular/core';
 import { InegiService } from 'src/app/services/inegi.service';
 import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
-import * as L from 'leaflet';
+import type * as Leaflet from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
 import { DataCostInegi } from 'src/app/shared/interfaces/route.cost.interface';
@@ -12,15 +12,20 @@ import { DetailCostItem } from './detail-cost-item/detail-cost-item';
 import { DataDetailCostInegi } from 'src/app/shared/interfaces/detail-route.cost.interface';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { AdUnit } from 'src/app/shared/components/ad-unit/ad-unit';
+import { SeoService } from 'src/app/services/seo.service';
+import { RouteHistoryService, RouteHistoryEntry } from 'src/app/services/route-history.service';
+
+// Módulo de Leaflet cargado en el navegador (no existe en el prerender/SSR, ver constructor)
+let L: typeof Leaflet;
 
 @Component({
   selector: 'price-calculator',
-  imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter],
+  imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter, AdUnit],
   templateUrl: './price-calculator.html',
   styleUrl: './price-calculator.css'
 })
-
-export default class PriceCalculator implements AfterViewInit{
+export default class PriceCalculator {
   // Variables para el origen
   origen = signal('');
   errorOrigen = signal('');
@@ -66,11 +71,25 @@ export default class PriceCalculator implements AfterViewInit{
   //Variables para consumo de servicios
   inegiService = inject(InegiService);
   userService = inject(UserService);
+  private seo = inject(SeoService);
+  routeHistoryService = inject(RouteHistoryService);
 
   // Variables para Leaflet para los mapas
-  private map!: L.Map;
-  ngAfterViewInit(): void {
-    this.initMap();
+  private map!: Leaflet.Map;
+
+  constructor() {
+    this.seo.update({
+      path: 'calcular-mi-ruta',
+      title: 'Calcula el costo de tu ruta | PeajesMX',
+      description: 'Calcula el costo de las casetas para tu ruta en México, con uno o varios destinos y ajustado a tu tipo de vehículo.'
+    });
+    // Leaflet depende de window/document: se carga solo en el navegador, nunca durante el prerender
+    afterNextRender(() => {
+      import('leaflet').then((mod) => {
+        L = mod;
+        this.initMap();
+      });
+    });
   }
 
   private initMap(): void{
@@ -435,6 +454,7 @@ export default class PriceCalculator implements AfterViewInit{
         if (index == this.destinosSeleccionados().length - 1){
           this.calculationLoading.set(false);
           this.setResultCostInList();
+          this.saveRouteToHistory();
         }else{
           this.calculateRouteCost(index + 1);
         }
@@ -533,6 +553,32 @@ export default class PriceCalculator implements AfterViewInit{
     this.selectedVehicle.set(-1);
     this.elementsInListOfCost.set([])
     this.showDetails.set(false);
+  }
+
+  private saveRouteToHistory(): void {
+    const origen = this.origenSeleccionado();
+    if (!origen) return;
+    this.routeHistoryService.add({
+      origen,
+      destinos: this.destinosSeleccionados(),
+      vehicle: this.selectedVehicle(),
+      over: this.selectedOver(),
+      totalCost: this.totalTollCost + this.totalOverCost
+    });
+  }
+
+  // Reutiliza una ruta del historial: selecciona origen/destinos/vehículo y vuelve a calcular
+  applyHistoryEntry(entry: RouteHistoryEntry): void {
+    if (this.isBusy()) return;
+    this.cleanMap();
+    this.selectOrigen(entry.origen);
+    this.destinosSeleccionados.set([]);
+    for (const destino of entry.destinos) {
+      this.selectDestine(destino);
+    }
+    this.selectVehicle(entry.vehicle.toString());
+    this.selectOver(entry.over.toString());
+    this.validateFormToCalculation();
   }
 
   showDetailOfRoutes(isOpen: boolean){

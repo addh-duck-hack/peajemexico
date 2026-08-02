@@ -9,6 +9,26 @@
       </span>
       <h1 class="mt-4 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Cotizar casetas de ruta</h1>
       <p class="mt-2 text-[var(--color-ink-soft)]">Consulta el costo de las casetas de un punto hacia diferentes destinos</p>
+
+      @if (routeHistoryService.history().length > 0) {
+        <div class="mt-6">
+          <span class="text-sm font-semibold text-[var(--color-ink)]">Rutas recientes</span>
+          <div class="mt-2 flex flex-wrap gap-2">
+            @for (entry of routeHistoryService.history(); track entry.id) {
+              <button
+                type="button"
+                [disabled]="isBusy()"
+                (click)="applyHistoryEntry(entry)"
+                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors disabled:opacity-50">
+                {{ entry.origen.nombre }}
+                @for (destino of entry.destinos; track destino.id_dest) {
+                  <span> &rarr; {{ destino.nombre }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      }
     </div>
   </section>
 
@@ -275,6 +295,11 @@
               </div>
               <!-- Finaliza contenedor para el resultado de la cotizacion -->
               <!-- ------------------------------------------------------------------------------- -->
+              @if (elementsInListOfCost().length > 0) {
+                <div class="w-full mt-6">
+                  <ad-unit slot="0000000000" />
+                </div>
+              }
             </div>
           </div>
         </div>

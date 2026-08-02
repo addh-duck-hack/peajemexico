@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /reset-password
+Disallow: /users/verify
+
+Sitemap: https://peajesmx.com/sitemap.xml

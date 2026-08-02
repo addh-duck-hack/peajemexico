@@ -4,6 +4,7 @@ import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
 import { MailService } from 'src/app/services/mail.service';
+import { SeoService } from 'src/app/services/seo.service';
 
 @Component({
   selector: 'app-contact-us',
@@ -13,6 +14,15 @@ import { MailService } from 'src/app/services/mail.service';
 })
 export default class ContactUs {
   private mailService = inject(MailService);
+  private seo = inject(SeoService);
+
+  constructor() {
+    this.seo.update({
+      path: 'contacto',
+      title: 'Contacto | PeajesMX',
+      description: 'Ponte en contacto con PeajesMX para dudas, soporte o cotizaciones de acceso vía API a la calculadora de casetas.'
+    });
+  }
 
   fullName = signal('');
   email = signal('');

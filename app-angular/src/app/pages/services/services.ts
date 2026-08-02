@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { SeoService } from 'src/app/services/seo.service';
 
 interface PlanFeature {
   text: string;
@@ -32,6 +33,16 @@ const SECONDARY_CTA_CLASS =
   styleUrl: './services.css',
 })
 export default class Services {
+  private seo = inject(SeoService);
+
+  constructor() {
+    this.seo.update({
+      path: 'servicios',
+      title: 'Planes y servicios | PeajesMX',
+      description: 'Conoce los planes de PeajesMX: calculadora gratuita sin registro, cuenta registrada con más consultas, y acceso empresarial vía API.'
+    });
+  }
+
   plans: Plan[] = [
     {
       name: 'Usuario no registrado',

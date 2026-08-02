@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Navbar } from '../../shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { SeoService } from 'src/app/services/seo.service';
 
 interface FeatureItem {
   icon: string;
@@ -17,11 +19,34 @@ interface StepItem {
 
 @Component({
   selector: 'home',
-  imports: [Navbar, MainFooter, RouterLink],
+  imports: [Navbar, MainFooter, RouterLink, NgOptimizedImage],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export default class Home {
+  private seo = inject(SeoService);
+
+  constructor() {
+    this.seo.update({
+      path: '',
+      title: 'PeajesMX — Calculadora de costos de casetas en México',
+      description: 'Calcula gratis el costo de las casetas de tu ruta en México con uno o varios destinos, ajustado a tu tipo de vehículo. Sin necesidad de crear una cuenta.'
+    });
+    this.seo.setJsonLd('organization', {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'PeajesMX',
+      url: 'https://peajesmx.com',
+      logo: 'https://peajesmx.com/images/logo-mark.svg'
+    });
+    this.seo.setJsonLd('website', {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'PeajesMX',
+      url: 'https://peajesmx.com'
+    });
+  }
+
   features: FeatureItem[] = [
     {
       icon: 'fa-solid fa-route',
