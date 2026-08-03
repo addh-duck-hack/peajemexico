@@ -2,20 +2,23 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { environment } from '@environments/environment';
 
 declare global {
   interface Window {
     dataLayer: any[];
+    gtag?: (...args: any[]) => void;
   }
 }
 
 type ConsentState = 'granted' | 'denied';
 
 /**
- * Carga y controla Google Analytics (gtag.js) y Google AdSense, con Google Consent Mode
- * (denegado por defecto hasta que el usuario acepta el aviso de cookies).
- * Los IDs vienen de environment.*.ts, por lo que en desarrollo no se envían datos reales.
+ * Google Analytics (gtag.js) y AdSense se cargan como snippet estático en index.html
+ * (igual que las instrucciones oficiales de Google), para que herramientas como el
+ * verificador de instalación de GA — que solo leen el HTML, sin ejecutar JS — lo detecten.
+ * Este servicio solo agrega, por encima de ese gtag global, el tracking de navegación
+ * dentro del SPA (Angular Router no recarga la página en cada cambio de ruta) y el
+ * puente con el aviso de cookies.
  */
 @Injectable({
   providedIn: 'root'
@@ -24,34 +27,13 @@ export class AnalyticsService {
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private router = inject(Router);
   private initialized = false;
-  // El primer page_view ya lo dispara gtag('config', ...) automáticamente (igual que el
-  // snippet original) — solo se rastrean manualmente las navegaciones SPA posteriores.
+  // El primer page_view ya lo dispara gtag('config', ...) en index.html — solo se
+  // rastrean manualmente las navegaciones SPA posteriores.
   private isFirstNavigation = true;
 
   initialize(): void {
     if (!this.isBrowser || this.initialized) return;
     this.initialized = true;
-
-    window.dataLayer = window.dataLayer || [];
-    this.gtag('js', new Date());
-    this.gtag('consent', 'default', {
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied',
-      analytics_storage: 'denied'
-    });
-
-    if (environment.gaMeasurementId) {
-      this.loadScript(`https://www.googletagmanager.com/gtag/js?id=${environment.gaMeasurementId}`);
-      this.gtag('config', environment.gaMeasurementId);
-    }
-
-    if (environment.adsensePublisherId) {
-      this.loadScript(
-        `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${environment.adsensePublisherId}`,
-        true
-      );
-    }
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -66,9 +48,9 @@ export class AnalyticsService {
 
   /** Se llama cuando el usuario acepta o rechaza el aviso de cookies. */
   updateConsent(granted: boolean): void {
-    if (!this.isBrowser) return;
+    if (!this.isBrowser || typeof window.gtag !== 'function') return;
     const state: ConsentState = granted ? 'granted' : 'denied';
-    this.gtag('consent', 'update', {
+    window.gtag('consent', 'update', {
       ad_storage: state,
       ad_user_data: state,
       ad_personalization: state,
@@ -77,23 +59,11 @@ export class AnalyticsService {
   }
 
   private trackPageView(path: string): void {
-    if (!this.isBrowser || !environment.gaMeasurementId) return;
-    this.gtag('event', 'page_view', {
+    if (!this.isBrowser || typeof window.gtag !== 'function') return;
+    window.gtag('event', 'page_view', {
       page_path: path,
       page_title: document.title,
       page_location: window.location.href
     });
-  }
-
-  private gtag(...args: any[]): void {
-    window.dataLayer.push(args);
-  }
-
-  private loadScript(src: string, crossOrigin = false): void {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = src;
-    if (crossOrigin) script.crossOrigin = 'anonymous';
-    document.head.appendChild(script);
   }
 }
