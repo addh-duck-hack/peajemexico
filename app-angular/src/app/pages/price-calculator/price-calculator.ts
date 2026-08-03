@@ -83,12 +83,16 @@ export default class PriceCalculator {
       title: 'Calcula el costo de tu ruta | PeajesMX',
       description: 'Calcula el costo de las casetas para tu ruta en México, con uno o varios destinos y ajustado a tu tipo de vehículo.'
     });
-    // Leaflet depende de window/document: se carga solo en el navegador, nunca durante el prerender
+    // Leaflet depende de window/document: se carga solo en el navegador, nunca durante el prerender.
+    // El bundle de leaflet se empaqueta como CommonJS y esbuild solo expone un default export
+    // (todo el namespace queda en mod.default), por lo que hay que desenvolverlo aquí.
     afterNextRender(() => {
-      import('leaflet').then((mod) => {
-        L = mod;
-        this.initMap();
-      });
+      import('leaflet')
+        .then((mod) => {
+          L = (mod as unknown as { default?: typeof Leaflet }).default ?? mod;
+          this.initMap();
+        })
+        .catch((error) => console.error('No se pudo cargar Leaflet:', error));
     });
   }
 
@@ -254,6 +258,7 @@ export default class PriceCalculator {
 
   // Funciones para el manejo de los mapas
   private cleanMap(){
+    if (!this.map) return;
     this.map.eachLayer((layer) => {
       if (!(layer instanceof L.TileLayer)) {
         this.map.removeLayer(layer);
@@ -263,6 +268,7 @@ export default class PriceCalculator {
   }
 
   private setPointInMap(dataInegi: DestinationInegi, isOrigin: boolean, setView: boolean, label?: string) {
+    if (!this.map) return;
     let parsedGeojson: GeoJsonObject;
     let geojsonData = dataInegi.geojson
 
@@ -312,6 +318,7 @@ export default class PriceCalculator {
   }
 
   private setPointTollInMap(dataInegi: DataDetailCostInegi, label: string){
+    if (!this.map) return;
     let parsedGeojson: GeoJsonObject;
     let geojsonData = dataInegi.geojson
 
@@ -338,6 +345,7 @@ export default class PriceCalculator {
   }
 
   private setRoutetInMap(dataInegi: DataCostInegi) {
+    if (!this.map) return;
     let parsedGeojson: GeoJsonObject;
     let geojsonData = dataInegi.geojson
 
