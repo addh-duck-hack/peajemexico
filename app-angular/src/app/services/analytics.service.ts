@@ -24,6 +24,9 @@ export class AnalyticsService {
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private router = inject(Router);
   private initialized = false;
+  // El primer page_view ya lo dispara gtag('config', ...) automáticamente (igual que el
+  // snippet original) — solo se rastrean manualmente las navegaciones SPA posteriores.
+  private isFirstNavigation = true;
 
   initialize(): void {
     if (!this.isBrowser || this.initialized) return;
@@ -40,9 +43,7 @@ export class AnalyticsService {
 
     if (environment.gaMeasurementId) {
       this.loadScript(`https://www.googletagmanager.com/gtag/js?id=${environment.gaMeasurementId}`);
-      // send_page_view en false: el primer page_view y los siguientes se disparan manualmente
-      // en cada NavigationEnd, ya que en una SPA el load inicial es la única navegación real.
-      this.gtag('config', environment.gaMeasurementId, { send_page_view: false });
+      this.gtag('config', environment.gaMeasurementId);
     }
 
     if (environment.adsensePublisherId) {
@@ -54,7 +55,13 @@ export class AnalyticsService {
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => this.trackPageView(event.urlAfterRedirects));
+      .subscribe((event) => {
+        if (this.isFirstNavigation) {
+          this.isFirstNavigation = false;
+          return;
+        }
+        this.trackPageView(event.urlAfterRedirects);
+      });
   }
 
   /** Se llama cuando el usuario acepta o rechaza el aviso de cookies. */
