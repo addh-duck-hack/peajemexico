@@ -1,14 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '@environments/environment';
 import { map } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [RouterLink],
+  imports: [RouterLink, Navbar, MainFooter],
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.css'
 })
@@ -26,11 +28,21 @@ export default class ResetPassword {
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
+  // Bandera para bloquear el formulario mientras se consume el servicio
+  loading = signal(false);
 
   // Consumo de servicios
   userService = inject(UserService);
+  router = inject(Router);
+
+  constructor(){
+    if(!this.token()){
+      this.router.navigate(['/']);
+    }
+  }
 
   submitForm(){
+    if (this.loading()) return;
     // Limpiar errores previos
     this.descriptionErrors.set([]);
     this.descriptionSuccess.set("");
@@ -61,6 +73,7 @@ export default class ResetPassword {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
+    this.loading.set(true);
     this.userService.resetPassword(this.token(),this.password()).subscribe({
       next: (response) => {
         // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
@@ -71,10 +84,12 @@ export default class ResetPassword {
         }
         this.password.set("");
         this.password2.set("");
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }

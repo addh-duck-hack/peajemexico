@@ -1,17 +1,27 @@
-version: "3.7"
 services:
-  angular-peaje:
+  peajemx-frontend:
     build:
       context: .
       dockerfile: ./app-angular/Dockerfile
-    container_name: angular-peaje
+    container_name: peajemx-frontend
     restart: always
-    ports:
-      - 105:80
-  peaje-services:
+    networks:
+      - npm
+      - peajemx-frontend-net
+  peajemx-services:
     build: ./backend
-    ports:
-      - "106:5000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+    container_name: peajemx-services
+    restart: always
+    networks:
+      - npm
+      - peajemx-services-net
+
+networks:
+  peajemx-frontend-net:
+    name: peajemx-frontend-net
+    driver: bridge
+  peajemx-services-net:
+    name: peajemx-services-net
+    driver: bridge
+  npm:
+    external: true

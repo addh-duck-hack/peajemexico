@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { verifyToken } = require('../middleware/authMiddleware');
+const { tollCalculatorRateLimiter } = require("../middleware/rateLimitMiddleware");
 const { sendError } = require("../utils/httpResponses");
 
-// Endpoint para buscar destinos
-router.get('/:search', verifyToken, async (req, res) => {
+// Endpoint público para buscar destinos (limitado por IP, ver rateLimitMiddleware)
+router.get('/:search', tollCalculatorRateLimiter, async (req, res) => {
   const { search } = req.params;
 
   // Validar que el texto de búsqueda se reciba

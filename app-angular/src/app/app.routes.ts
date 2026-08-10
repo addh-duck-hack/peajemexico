@@ -18,30 +18,20 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/services/services')
   },
   {
-    path: 'login',
-    loadComponent: () => import('./auth/login/login')
+    path: 'legales',
+    loadComponent: () => import('./pages/legal/legal')
   },
   {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard'),
-    children:[
-      {
-        path: 'home',
-        loadComponent: () => import('./pages/dashboard/home-dashboard/home-dashboard'),
-      },
-      {
-        path: 'price',
-        loadComponent: () => import('./pages/dashboard/price-dashboard/price-dashboard'),
-      },
-      {
-        path: 'history',
-        loadComponent: () => import('./pages/dashboard/history-dashboard/history-dashboard'),
-      },
-      {
-        path: '**',
-        redirectTo: 'home'
-      }
-    ]
+    path: 'privacidad',
+    loadComponent: () => import('./pages/privacy-policy/privacy-policy')
+  },
+  {
+    path: 'calcular-mi-ruta',
+    loadComponent: () => import('./pages/price-calculator/price-calculator')
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./auth/login/login')
   },
   {
     path: 'users/verify',

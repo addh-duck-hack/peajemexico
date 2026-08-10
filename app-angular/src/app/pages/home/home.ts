@@ -1,44 +1,100 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Navbar } from '../../shared/components/navbar/navbar';
-import { SectionItem } from 'src/app/shared/interfaces/section-separator.interface';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { SeoService } from 'src/app/services/seo.service';
+
+interface FeatureItem {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface StepItem {
+  number: string;
+  title: string;
+  description: string;
+}
 
 @Component({
   selector: 'home',
-  imports: [Navbar, MainFooter, ],
+  imports: [Navbar, MainFooter, RouterLink, NgOptimizedImage],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export default class Home {
-  separator1:SectionItem = {
-    id: 0,
-    title: 'Experiencia',
-    description: 'Nos especializamos en ofrecer soluciones integrales de transporte de carga general y especializada, garantizando seguridad, puntualidad y eficiencia en cada servicio. Con más de 20 años de experiencia en el sector, somos el aliado estratégico de empresas que requieren logística confiable y adaptada a sus necesidades.',
-    image: 'images/fondo-1.jpg',
-    route: '/section1'
-  };
+  private seo = inject(SeoService);
 
-  cardsServices:SectionItem[] = [
+  constructor() {
+    this.seo.update({
+      path: '',
+      title: 'PeajesMX — Calculadora de costos de casetas en México',
+      description: 'Calcula gratis el costo de las casetas de tu ruta en México con uno o varios destinos, ajustado a tu tipo de vehículo. Sin necesidad de crear una cuenta.'
+    });
+    this.seo.setJsonLd('organization', {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'PeajesMX',
+      url: 'https://peajesmx.com',
+      logo: 'https://peajesmx.com/images/logo-mark.svg'
+    });
+    this.seo.setJsonLd('website', {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'PeajesMX',
+      url: 'https://peajesmx.com'
+    });
+  }
+
+  features: FeatureItem[] = [
     {
-      id: 0,
-      title: 'Experiencia',
-      description: 'Por más de 20 años Transportes ROMAGA, se ha desarrollado en la industria del transporte de carga federal, brindando sus servicios en diferentes partes de la República Mexicana.\n Se ha consolidado en el estado de Veracruz, enfatizando su experiencia en el servicio de transporte a empresas del ramo petrolero, por más de 15 años.',
-      image: 'images/photo_9.png',
-      route: '/section1'
+      icon: 'fa-solid fa-route',
+      title: 'Rutas con varios destinos',
+      description: 'Busca tu punto de origen y agrega los destinos que necesites para armar el trayecto completo de tu viaje.'
     },
     {
-      id: 1,
-      title: 'Experiencia 2',
-      description: 'Por más de 20 años Transportes ROMAGA, se ha desarrollado en la industria del transporte de carga federal, brindando sus servicios en diferentes partes de la República Mexicana.\n Se ha consolidado en el estado de Veracruz, enfatizando su experiencia en el servicio de transporte a empresas del ramo petrolero, por más de 15 años.',
-      image: 'images/photo_3.png',
-      route: '/section1'
+      icon: 'fa-solid fa-truck-moving',
+      title: 'Según tu vehículo',
+      description: 'Ajusta el cálculo por tipo de vehículo, incluyendo camiones con ejes excedentes.'
     },
     {
-      id: 3,
-      title: 'Excelencia',
-      description: 'Por más de 20 años Transportes ROMAGA, se ha desarrollado en la industria del transporte de carga federal, brindando sus servicios en diferentes partes de la República Mexicana.\n Se ha consolidado en el estado de Veracruz, enfatizando su experiencia en el servicio de transporte a empresas del ramo petrolero, por más de 15 años.',
-      image: 'images/photo_5.png',
-      route: '/section1'
+      icon: 'fa-solid fa-map-location-dot',
+      title: 'Desglose por caseta',
+      description: 'Consulta el costo de cada caseta sobre el mapa, con distancia y tiempo estimado por tramo.'
+    }
+  ];
+
+  steps: StepItem[] = [
+    {
+      number: '01',
+      title: 'Busca o marca tu origen',
+      description: 'Escribe tu punto de partida en el buscador o selecciónalo directamente sobre el mapa.'
+    },
+    {
+      number: '02',
+      title: 'Agrega tus destinos',
+      description: 'Suma uno o varios destinos para armar el trayecto completo de tu viaje.'
+    },
+    {
+      number: '03',
+      title: 'Elige tu vehículo',
+      description: 'Selecciona el tipo de vehículo y, si aplica, los ejes excedentes.'
+    },
+    {
+      number: '04',
+      title: 'Obtén el costo total',
+      description: 'Revisa el total estimado de casetas para toda la ruta.'
+    },
+    {
+      number: '05',
+      title: 'Consulta el detalle por caseta',
+      description: 'Ve la distancia, el tiempo y el costo de cada tramo, marcado directamente en el mapa.'
+    },
+    {
+      number: '06',
+      title: 'Todo sin costo',
+      description: 'Es gratis y no necesitas crear una cuenta para usar la calculadora.'
     }
   ];
 }

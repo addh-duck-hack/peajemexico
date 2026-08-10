@@ -1,0 +1,327 @@
+<navbar />
+
+<main>
+  <!-- Encabezado de la herramienta, mismo lenguaje visual que el resto del sitio -->
+  <section class="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+      <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+        Calculadora de casetas
+      </span>
+      <h1 class="mt-4 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Cotizar casetas de ruta</h1>
+      <p class="mt-2 text-[var(--color-ink-soft)]">Consulta el costo de las casetas de un punto hacia diferentes destinos</p>
+
+      @if (routeHistoryService.history().length > 0) {
+        <div class="mt-6">
+          <span class="text-sm font-semibold text-[var(--color-ink)]">Rutas recientes</span>
+          <div class="mt-2 flex flex-wrap gap-2">
+            @for (entry of routeHistoryService.history(); track entry.id) {
+              <button
+                type="button"
+                [disabled]="isBusy()"
+                (click)="applyHistoryEntry(entry)"
+                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors disabled:opacity-50">
+                {{ entry.origen.nombre }}
+                @for (destino of entry.destinos; track destino.id_dest) {
+                  <span> &rarr; {{ destino.nombre }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="bg-[var(--color-bg)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10">
+      <div class="w-full grid grid-cols-1 xl:grid-cols-10 gap-6">
+        <!-- Contenedor del formulario para las cotizaciones -->
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 xl:col-span-3">
+          <div class="flex flex-wrap items-center justify-between mb-4">
+            <div class="w-full">
+              <!-- div contenedor del formulario -->
+              <div class="flex w-full">
+                <form class="w-full price-form">
+                  @if (elementsInListOfCost().length == 0) {
+                    <!-- Selector del origen con sus vistas adicionales -->
+                    <div class="flex items-center price-content-input py-2 px-3 price-rounded">
+                      <i class="fa-solid fa-map-pin price-form-icon"></i>
+                      <input
+                        class="pl-2 mr-3 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                        type="text"
+                        name="origen"
+                        [value]="origen()"
+                        (input)="origen.set(origentxt.value)"
+                        (keyup.enter)="validateOrigen()"
+                        placeholder="Origen"
+                        #origentxt
+                      />
+                      <button
+                        (click)="validateOrigen()"
+                        type="button"
+                        [disabled]="isBusy()"
+                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
+                        {{botonOrigenTitulo()}}
+                      </button>
+                    </div>
+                    @if (errorOrigen() !== "") {
+                      <span class="flex items-center font-medium tracking-wide text-red-600 text-xs ml-1 mt-1">
+                        {{errorOrigen()}}
+                      </span>
+                    }
+                    @if (origenLoading()) {
+                      <div class="mt-4">
+                        <skeleton-content-loader />
+                      </div>
+                    }
+                    @if (origenResponse().length > 0) {
+                      <div class="max-w-lg mx-auto mt-2">
+                        <div class="content-destines bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] w-full text-[var(--color-ink)] text-sm font-medium">
+                          @for (origen of origenResponse(); track origen.id_dest; let i = $index) {
+                            <a
+                              (click)="selectOrigen(origen)"
+                              [class]="'block px-4 py-2 w-full hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-accent)] cursor-pointer' + (i !== origenResponse().length - 1 ? ' border-b border-[var(--color-border)]' : '')">
+                                <h3 class="">{{i + 1}} - {{origen.nombre}}</h3>
+                                <p class="text-xs text-[var(--color-ink-soft)]">{{origen.ent_abr}}</p>
+                            </a>
+                          }
+                        </div>
+                      </div>
+                    }
+                    <!-- Termina selector del origen con sus vistas adicionales -->
+                    <!-- ------------------------------------------------------------------------------- -->
+                    <!-- Selector del destino con vistas adicionales y listado de destinos  -->
+                    <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                      <i class="fa-solid fa-location-crosshairs price-form-icon"></i>
+                      <input
+                        class="pl-2 outline-none border-none w-full bg-transparent text-[var(--color-ink)] placeholder:text-[var(--color-ink-soft)]"
+                        type="text"
+                        name="destino"
+                        [value]="destino()"
+                        (input)="destino.set(destinotxt.value)"
+                        placeholder="Destino"
+                        #destinotxt
+                      />
+                      <button
+                        (click)="validateDestino()"
+                        type="button"
+                        [disabled]="isBusy()"
+                        class="px-4 py-1 price-no-margin hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer price-rounded text-[var(--color-ink-invert)] font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
+                        Buscar
+                      </button>
+                    </div>
+                    @if (errorDestino() !== "") {
+                      <span class="flex items-center font-medium tracking-wide text-red-600 text-xs ml-1 mt-1">
+                        {{errorDestino()}}
+                      </span>
+                    }
+                    @if (destinoLoading()) {
+                      <div class="mt-4">
+                        <skeleton-content-loader />
+                      </div>
+                    }
+                    @if (destinoResponse().length > 0) {
+                      <div class="max-w-lg mx-auto mt-2">
+                        <div class="content-destines bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)] w-full text-[var(--color-ink)] text-sm font-medium">
+                          @for (destino of destinoResponse(); track destino.id_dest; let i = $index) {
+                            <a
+                              (click)="selectDestine(destino)"
+                              [class]="'block px-4 py-2 w-full hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-accent)] cursor-pointer' + (i !== origenResponse().length - 1 ? ' border-b border-[var(--color-border)]' : '')">
+                                <h3 class="">{{i + 1}} - {{destino.nombre}}</h3>
+                                <p class="text-xs text-[var(--color-ink-soft)]">{{destino.ent_abr}}</p>
+                            </a>
+                          }
+                        </div>
+                      </div>
+                    }
+                    <!-- Aqui se va a listar los destinos seleccionados -->
+                    @if (destinosSeleccionados().length > 0) {
+                      <div class="flex flex-col mt-4">
+                        <h3 class="text-md font-bold text-[var(--color-ink)]">Destinos seleccionados</h3>
+                        <div class="overflow-x-auto rounded-lg border border-[var(--color-border)]">
+                          <div class="align-middle inline-block min-w-full">
+                            <div class="overflow-hidden sm:rounded-lg">
+                              <table class="min-w-full divide-y divide-[var(--color-border)]">
+                                <thead class="bg-[var(--color-surface-alt)]">
+                                  <tr>
+                                    <th scope="col" class="p-4 text-left text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider">
+                                      Nombre
+                                    </th>
+                                    <th scope="col" class="p-4 text-left text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider">
+                                      Entidad
+                                    </th>
+                                    <th scope="col" class="p-4 text-left text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider">
+                                      Quitar
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody class="bg-[var(--color-surface)]">
+                                  @for (destino of destinosSeleccionados(); track destino.id_dest; let i = $index; let odd = $odd) {
+                                    <tr [className]="odd ? 'bg-[var(--color-surface-alt)]' : ''">
+                                      <td class="p-4 text-sm font-normal text-[var(--color-ink)]">
+                                        {{destino.nombre}}
+                                      </td>
+                                      <td class="p-4 text-sm font-normal text-[var(--color-ink-soft)]">
+                                        {{destino.ent_abr}}
+                                      </td>
+                                      <td class="p-4 text-sm font-semibold text-[var(--color-ink)] text-center">
+                                        <a
+                                        (click)="deleteDestine(destino.id_dest)"
+                                        class="cursor-pointer hover:text-[var(--color-accent)]"
+                                        >
+                                          <i class="fa-regular fa-circle-xmark"></i>
+                                        </a>
+                                      </td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    <!-- Termina selector del destino con vistas adicionales y listado de destinos  -->
+                    <!-- ------------------------------------------------------------------------------- -->
+                    <!-- OptionInput para seleccionar el tipo de vehiculo del cual se requiere la consulta  -->
+                    <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                      <i class="fa-solid fa-car-side price-form-icon"></i>
+                      <select
+                        #selectOptionVehicle
+                        id="vehicle"
+                        class="w-full bg-transparent text-[var(--color-ink)] outline-none"
+                        (change)="selectVehicle(selectOptionVehicle.value)"
+                      >
+                        <option selected>Tipo de vehículo</option>
+                        @for (vehicleValue of valuesOfVehicle; track vehicleValue) {
+                          <option value="{{vehicleValue}}">
+                            {{namesOfVehicle[vehicleValue]}}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                    <!-- Termina optionInput para seleccionar el tipo de vehiculo del cual se requiere la consulta  -->
+                    <!-- ------------------------------------------------------------------------------- -->
+                    <!-- optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
+                    <div class="flex items-center price-content-input py-2 px-3 price-rounded mt-4">
+                      <i class="fa-solid fa-truck-moving price-form-icon"></i>
+                      <select
+                        #selectOptionOver
+                        id="over"
+                        class="w-full bg-transparent text-[var(--color-ink)] outline-none"
+                        (change)="selectOver(selectOptionOver.value)"
+                      >
+                        <option value="0" selected>Ejes excedentes</option>
+                        @for (overValue of valuesOfOver; track overValue) {
+                          <option value="{{overValue}}">
+                            {{namesOfOver[overValue]}}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                    <!-- Termina optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
+                    <!-- ------------------------------------------------------------------------------- -->
+                    <!-- Boton para obtener costos de casetas -->
+                    <button
+                      (click)="validateFormToCalculation()"
+                      type="button"
+                      [disabled]="isBusy()"
+                      class="block w-full whitespace-nowrap hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 px-4 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                      Obtener costos de casetas
+                    </button>
+                    @if (errorsFormCost().length > 0) {
+                      @for (errorForm of errorsFormCost(); track $index) {
+                        <span class="flex items-center font-medium tracking-wide text-red-600 text-xs ml-1">
+                          {{errorForm}}
+                        </span>
+                      }
+                    }
+                    <!-- Finaliza boton para obtener costos de casetas -->
+                    @if (calculationLoading()) {
+                      <div class="mt-4">
+                        <skeleton-content-loader />
+                      </div>
+                    }
+                  }
+                  @else{
+                    @if (calculationLoading()) {
+                      <div class="mt-4">
+                        <skeleton-content-loader />
+                      </div>
+                    }
+                    <!-- Cuando se muestren los resultados se van a ocultar los componentes y a mostrar un boton para un nuevo calculo -->
+                    <button
+                      (click)="newCalculation()"
+                      type="button"
+                      [disabled]="isBusy()"
+                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                      Realizar otro calculo
+                    </button>
+                    <!-- Finaliza boton para nuevo calculo -->
+                  }
+                  <!-- Aqui vamos a mostrar el boton para ocultar detalles de casetas -->
+                  @if (showDetails()) {
+                    <!-- Cuando se muestren los resultados se van a ocultar los componentes y a mostrar un boton para un nuevo calculo -->
+                    <button
+                      (click)="showDetailOfRoutes(false)"
+                      type="button"
+                      [disabled]="isBusy()"
+                      class="block w-full sm:w-3/5 hover:bg-[var(--color-accent-hover)] bg-[var(--color-accent)] cursor-pointer mt-4 py-2 price-rounded text-[var(--color-ink-invert)] font-semibold mb-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                      Ocultar detalles
+                    </button>
+                    <!-- Finaliza boton para nuevo calculo -->
+                  }
+                  <!-- ------------------------------------------------------------------------------- -->
+                  @if (detailLoading()) {
+                    <div class="mt-4">
+                      <skeleton-content-loader />
+                    </div>
+                  }
+                </form>
+              </div>
+              <!-- ------------------------------------------------------------------------------- -->
+              <!-- Contenedor para el resultado de la cotizacion detailsCostRoute-->
+              <div class="w-full mt-6">
+                @if (showDetails()) {
+                  @for (itemCost of detailsCostRoute(); track itemCost.id) {
+                    <detail-cost-item [dataCost]="itemCost" [disabled]="isBusy()" (openDetail)="showDetailOfRoutes(true)"/>
+                  }
+                }
+                @else{
+                  @for (itemCost of elementsInListOfCost(); track itemCost.id) {
+                    <detail-cost-item [dataCost]="itemCost" [disabled]="isBusy()" (openDetail)="showDetailOfRoutes(true)"/>
+                  }
+                }
+              </div>
+              <!-- Finaliza contenedor para el resultado de la cotizacion -->
+              <!-- ------------------------------------------------------------------------------- -->
+              @if (elementsInListOfCost().length > 0) {
+                <div class="w-full mt-6">
+                  <ad-unit slot="4333649177" />
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        <!-- ------------------------------------------------------------------------------- -->
+        <!-- Contenedor para mostrar el mapa -->
+        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 xl:col-span-7">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center text-[var(--color-ink)]">
+                <i class="fa-solid fa-map-location mr-3 text-[var(--color-accent)]"></i><h3 class="text-xl font-bold">Mapa</h3>
+              </div>
+              <span class="text-base font-normal text-[var(--color-ink-soft)]">Puedes presionar los marcadores para seleccionar un punto de origen o destino directamente desde el mapa</span>
+            </div>
+          </div>
+          <!-- Div contenedor del mapa -->
+          <div id="main-chart">
+            <div id="map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main-footer />

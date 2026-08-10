@@ -12,3 +12,12 @@
 .login-form>div>input::-moz-placeholder { color: #D7D7D9; } /* Firefox 19+ */
 .login-form>div>input:-moz-placeholder { color: #D7D7D9; } /* Firefox 4 a 18 */
 .login-form>div>input:-ms-input-placeholder { color: #D7D7D9; } /* Internet Explorer 10+ y Edge antiguo */
+
+@keyframes alert-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-in {
+  animation: alert-in 0.2s ease-out;
+}

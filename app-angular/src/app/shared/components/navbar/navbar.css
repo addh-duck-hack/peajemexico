@@ -3,14 +3,15 @@
 }
 
 .text-main{
-  color: var(--color-label);
+  color: var(--color-ink);
 }
 
 .background-navbar{
-  background-color: var(--color-main);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .background-selected{
-  font-weight: 900;
-  color: var(--color-label-selected);
+  font-weight: 600;
+  color: var(--color-accent);
 }

@@ -1,0 +1,22 @@
+<div class="flex p-4 w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl mb-4">
+  <div
+  [class]="'flex items-center justify-center h-12 w-12 rounded-xl text-[' + dataCost().iconColor +']'"
+  [style]="'background-color: ' + dataCost().bgColor"
+  >
+    <i [class]="dataCost().icon"></i>
+  </div>
+  <div class="flex flex-col flex-grow ml-4">
+    <div class="text-sm text-[var(--color-ink-soft)]">
+      <b>{{dataCost().titleStrong}}</b>{{dataCost().title}}
+    </div>
+    <div class="font-bold text-lg text-[var(--color-ink)]">{{dataCost().value}}</div>
+    <div class="font-bold text-lg text-[var(--color-ink)]">{{dataCost().subValue}}</div>
+    @if (dataCost().btnDetail) {
+      <a
+      [class]="'detail-cost-item text-right text-[var(--color-accent)] ' + (disabled() ? 'opacity-50 pointer-events-none cursor-not-allowed' : 'cursor-pointer hover:text-[var(--color-accent-hover)]')"
+      (click)="openDetail.emit(true)">
+        <i class="fa-solid fa-circle-info"></i>
+      </a>
+    }
+  </div>
+</div>

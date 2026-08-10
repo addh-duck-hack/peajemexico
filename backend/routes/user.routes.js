@@ -15,6 +15,7 @@ const {
 } = require("../middleware/rateLimitMiddleware");
 const { createSingleImageUploadMiddlewares } = require("../middleware/imageUploadMiddleware");
 const { sendError } = require("../utils/httpResponses");
+const { buildVerifyAccountEmail, buildResetPasswordEmail, getLogoAttachment } = require("../utils/emailTemplates");
 const nodemailer = require('nodemailer');
 const {
   signAccessToken,
@@ -44,12 +45,7 @@ const {
 router.post("/register", registerRateLimiter, validateRegisterPayload, async (req, res) => {
   try {
     // No aceptar role desde el cliente al registrar; forzar 'customer'
-    const { name, email, password, customerKey } = req.body;
-
-    // Validamos si el customerKey es válido
-    if (customerKey !== process.env.CUSTOMER_KEY) {
-      return sendError(res, 403, "INVALID_CUSTOMER_KEY", "Clave de cliente inválida.");
-    }
+    const { name, email, password } = req.body;
 
     // Verificar si el correo ya está registrado
     const existing = await User.findOne({ email });
@@ -68,29 +64,30 @@ router.post("/register", registerRateLimiter, validateRegisterPayload, async (re
 
     // Configurar transporter usando variables de entorno
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || '587', 10),
+      host: process.env.EMAIL_CODES_HOST,
+      port: parseInt(process.env.EMAIL_CODES_PORT || '587', 10),
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_CODES_USER,
+        pass: process.env.EMAIL_CODES_PASS,
       },
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: `Verifica tu cuenta - ${process.env.COMPANY_NAME}`,
-      html: `<p>Hola ${user.name || ''},</p>
-             <p>Gracias por registrarte. Para activar tu cuenta, haz clic en el siguiente enlace:</p>
-             <p><a href="${verifyUrl}">Verificar mi correo</a></p>
-             <p>Si no solicitaste este correo, ignóralo.</p>`
-    };
+    const { subject, html, text } = buildVerifyAccountEmail({ name: user.name, verifyUrl });
 
     // Enviar correo (no bloquear el flujo si falla el envío)
-    transporter.sendMail(mailOptions).catch(err => {
-      console.error('Error enviando correo de verificación:', err);
-    });
+    getLogoAttachment()
+      .then((logoAttachment) => transporter.sendMail({
+        from: process.env.EMAIL_CODES_USER,
+        to: user.email,
+        subject,
+        text,
+        html,
+        attachments: [logoAttachment],
+      }))
+      .catch(err => {
+        console.error('Error enviando correo de verificación:', err);
+      });
 
     res.status(201).json({
       message: "Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.",
@@ -142,18 +139,13 @@ router.get('/verify', async (req, res) => {
 
 // Ruta para solicitar reset de contraseña
 router.post('/forgot-password', async (req, res) => {
-  const { email, customerKey } = req.body;
+  const { email } = req.body;
 
-  if (!email || !customerKey) {
-    return sendError(res, 400, "MISSING_FIELDS", "Email y clave de cliente son requeridos");
+  if (!email) {
+    return sendError(res, 400, "MISSING_FIELDS", "Email es requerido");
   }
 
   try {
-    // Validar customerKey global
-    if (customerKey !== process.env.CUSTOMER_KEY) {
-      return sendError(res, 403, "INVALID_CUSTOMER_KEY", "Clave de cliente inválida.");
-    }
-
     // Buscar usuario por email
     const user = await User.findOne({ email });
     if (!user) {
@@ -167,31 +159,32 @@ router.post('/forgot-password', async (req, res) => {
     const frontendBase = process.env.FRONTEND_URL;
     const resetUrl = `${frontendBase}/reset-password?token=${token}`;
 
-    // Configurar transporter
+    // Configurar transporter (misma bandeja transaccional usada para códigos/verificación)
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT || '587', 10),
+      host: process.env.EMAIL_CODES_HOST,
+      port: parseInt(process.env.EMAIL_CODES_PORT || '587', 10),
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_CODES_USER,
+        pass: process.env.EMAIL_CODES_PASS,
       },
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: `Recupera tu contraseña - ${process.env.COMPANY_NAME}`,
-      html: `<p>Hola ${user.name || ''},</p>
-             <p>Para cambiar tu contraseña, haz clic en el siguiente enlace:</p>
-             <p><a href="${resetUrl}">Cambiar mi contraseña</a></p>
-             <p>Si no solicitaste este correo, ignóralo.</p>`
-    };
+    const { subject, html, text } = buildResetPasswordEmail({ name: user.name, resetUrl });
 
     // Enviar correo
-    transporter.sendMail(mailOptions).catch(err => {
-      console.error('Error enviando correo de reset:', err);
-    });
+    getLogoAttachment()
+      .then((logoAttachment) => transporter.sendMail({
+        from: process.env.EMAIL_CODES_USER,
+        to: user.email,
+        subject,
+        text,
+        html,
+        attachments: [logoAttachment],
+      }))
+      .catch(err => {
+        console.error('Error enviando correo de reset:', err);
+      });
 
     res.status(200).json({
       message: "Se ha enviado un enlace para cambiar la contraseña al correo que se encuentra registrado."

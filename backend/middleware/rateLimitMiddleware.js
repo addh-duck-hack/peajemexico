@@ -63,9 +63,17 @@ const contactEmailRateLimiter = createRateLimiter({
   message: "Demasiados intentos de envío de contacto. Intenta nuevamente más tarde.",
 });
 
+const tollCalculatorRateLimiter = createRateLimiter({
+  windowMs: 10 * 60 * 1000,
+  max: 30,
+  code: "RATE_LIMIT_TOLL_CALCULATOR_EXCEEDED",
+  message: "Demasiadas consultas de rutas/casetas. Intenta nuevamente más tarde.",
+});
+
 module.exports = {
   createRateLimiter,
   registerRateLimiter,
   loginRateLimiter,
   contactEmailRateLimiter,
+  tollCalculatorRateLimiter,
 };

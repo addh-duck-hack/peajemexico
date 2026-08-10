@@ -4,10 +4,24 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
+import { Navbar } from 'src/app/shared/components/navbar/navbar';
+import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+
+interface Benefit {
+  icon: string;
+  text: string;
+}
+
+const BENEFITS: Benefit[] = [
+  { icon: 'fa-solid fa-gauge-high', text: 'Límite de consultas ampliado: 500 cada 10 minutos, en vez de 30' },
+  { icon: 'fa-solid fa-clock-rotate-left', text: 'Guarda el historial de tus rutas consultadas' },
+  { icon: 'fa-solid fa-user-check', text: 'Pensado para agencias de viajes, choferes y uso recurrente' },
+  { icon: 'fa-solid fa-gift', text: 'Es gratis, no requiere tarjeta ni pago alguno' },
+];
 
 @Component({
   selector: 'login',
-  imports: [RouterLink],
+  imports: [RouterLink, Navbar, MainFooter],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -18,15 +32,17 @@ export default class Login {
   title = signal('¡Hola!');
   subtitle = signal('Bienvenido de vuelta');
   env = environment;
+  benefits = BENEFITS;
   // Variables para formulario
   name = signal('');
   email = signal('');
   password = signal('');
   password2 = signal('');
-  customerKey = signal('');
   // Variable para manejar errores
   descriptionErrors = signal<string[]>([])
   descriptionSuccess = signal<string>('')
+  // Bandera para bloquear el formulario mientras se consume algún servicio
+  loading = signal(false);
 
   // Consumo de servicios
   userService = inject(UserService)
@@ -35,11 +51,12 @@ export default class Login {
 
   constructor(){
     if(this.userService.isTokenValid()){
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/calcular-mi-ruta']);
     }
   }
 
   changeForm(type: string) {
+    if (this.loading()) return;
     this.typeForm.set(type);
     this.descriptionErrors.set([]);
     this.descriptionSuccess.set("");
@@ -65,6 +82,7 @@ export default class Login {
   }
 
   submitForm() {
+    if (this.loading()) return;
     switch(this.typeForm()){
       case 'login':
         this.loginUser();
@@ -95,9 +113,6 @@ export default class Login {
     if (!this.password()) {
       errors.push('La contraseña es requerida');
     }
-    if (!this.customerKey()) {
-      errors.push('La clave de cliente es requerida');
-    }
 
     // Validar que el name tenga al menos 5 caracteres
     if (this.name() && this.name().length < 5) {
@@ -122,11 +137,6 @@ export default class Login {
       errors.push('Las contraseñas no coinciden');
     }
 
-    // Validar que customerKey tenga exactamente 15 caracteres
-    if (this.customerKey() && this.customerKey().length !== 15) {
-      errors.push('La clave de cliente debe tener exactamente 15 caracteres, si no cuentas con ella comunicate con tu administrador para que te la proporcione');
-    }
-
     // Si hay errores, almacenarlos y retornar
     if (errors.length > 0) {
       this.descriptionErrors.set(errors);
@@ -137,7 +147,8 @@ export default class Login {
     console.log('Formulario válido, proceder con el registro');
 
     // Cunsumir el servicio para registrar usuario
-    this.userService.registerNewUser(this.name(),this.email(), this.password(), this.customerKey()).subscribe({
+    this.loading.set(true);
+    this.userService.registerNewUser(this.name(),this.email(), this.password()).subscribe({
       next: (response) => {
         // Cuando el registro se hace de manera exitosa se limpia el formulario y se muestra mensaje del servicio
         if (response.message){
@@ -149,11 +160,12 @@ export default class Login {
         this.email.set("");
         this.password.set("");
         this.password2.set("");
-        this.customerKey.set("");
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         // Mostrar el mensaje de error del servidor
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }
@@ -189,16 +201,19 @@ export default class Login {
     console.log('Formulario válido, proceder con el login');
 
     // Cunsumir el servicio para registrar usuario
+    this.loading.set(true);
     this.userService.loginNewSession(this.email(), this.password()).subscribe({
       next: (response) => {
         // Guardar la sesión del usuario
         this.userService.saveSession(response);
         this.descriptionSuccess.set(response.message);
-        // Redirigir al dashboard
-        this.router.navigate(['/dashboard']);
+        this.loading.set(false);
+        // Redirigir a la calculadora con la sesión ya iniciada
+        this.router.navigate(['/calcular-mi-ruta']);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }
@@ -212,9 +227,6 @@ export default class Login {
     if (!this.email()) {
       errors.push('El email es requerido');
     }
-    if (!this.customerKey()) {
-      errors.push('La clave de cliente es requerida');
-    }
 
     // Validar que el email tenga un formato válido
     if (this.email()) {
@@ -224,11 +236,6 @@ export default class Login {
       }
     }
 
-    // Validar que customerKey tenga exactamente 15 caracteres
-    if (this.customerKey() && this.customerKey().length !== 15) {
-      errors.push('La clave de cliente debe tener exactamente 15 caracteres, si no cuentas con ella comunicate con tu administrador para que te la proporcione');
-    }
-
     // Si hay errores, almacenarlos y retornar
     if (errors.length > 0) {
       this.descriptionErrors.set(errors);
@@ -236,15 +243,17 @@ export default class Login {
     }
 
     // Si todas las validaciones pasaron, continuar con el reseteo de contraseña
-    this.userService.forgotPassword(this.email(), this.customerKey()).subscribe({
+    this.loading.set(true);
+    this.userService.forgotPassword(this.email()).subscribe({
       next: (response) => {
         // Se limpian los campos y se muestra el mensaje desde el servidor
         this.email.set("");
-        this.customerKey.set("");
         this.descriptionSuccess.set(response.message);
+        this.loading.set(false);
       },
       error: (error: HttpErrorResponse) => {
         this.descriptionErrors.set([error.error.error.message]);
+        this.loading.set(false);
       }
     });
   }

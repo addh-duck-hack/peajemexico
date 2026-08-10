@@ -1,3 +1,141 @@
 <navbar />
 
+<main>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-[var(--color-bg)]">
+    <div class="absolute inset-0 pointer-events-none">
+      <img
+        ngSrc="images/hero-highway.jpg"
+        fill
+        priority
+        alt=""
+        class="object-cover opacity-50 md:opacity-90" />
+      <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-bg)] via-[var(--color-bg)]/85 to-[var(--color-bg)]/40"></div>
+    </div>
+    <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
+      <div class="max-w-2xl">
+        <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+          Calculadora de casetas para México
+        </span>
+        <h1 class="mt-6 text-4xl md:text-5xl font-bold leading-tight text-[var(--color-ink)]">
+          Conoce el costo de tu ruta antes de salir a carretera
+        </h1>
+        <p class="mt-5 text-lg text-[var(--color-ink-soft)] max-w-xl">
+          Calcula el costo de casetas para viajes con uno o varios destinos en la red carretera federal de México, ajustado a tu tipo de vehículo.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-3">
+          <a
+            routerLink="/calcular-mi-ruta"
+            class="inline-flex justify-center items-center rounded-lg px-6 py-3 text-sm font-semibold text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">
+            Calcular mi ruta
+          </a>
+          <a
+            href="#como-funciona"
+            class="inline-flex justify-center items-center rounded-lg px-6 py-3 text-sm font-semibold text-[var(--color-ink)] border border-[var(--color-border)] hover:bg-[var(--color-surface-alt)] transition-colors">
+            Ver cómo funciona
+          </a>
+        </div>
+        <p class="mt-4 text-sm text-[var(--color-ink-soft)]">
+          Es gratis y no necesitas crear una cuenta para usar la calculadora.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Qué puedes hacer -->
+  <section class="bg-[var(--color-surface)] border-y border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20">
+      <div class="max-w-2xl">
+        <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink)]">¿Qué puedes calcular?</h2>
+        <p class="mt-3 text-[var(--color-ink-soft)]">
+          Una calculadora enfocada en lo que necesitas resolver antes de un viaje por carretera.
+        </p>
+      </div>
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (feature of features; track feature.title) {
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6">
+            <div class="w-16 h-16 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] flex items-center justify-center text-2xl">
+              <i [class]="feature.icon"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-[var(--color-ink)]">{{ feature.title }}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section id="como-funciona" class="bg-[var(--color-bg)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20">
+      <div class="max-w-2xl">
+        <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink)]">¿Cómo funciona?</h2>
+        <p class="mt-3 text-[var(--color-ink-soft)]">
+          Todo lo que puedes hacer con la calculadora, paso a paso.
+        </p>
+      </div>
+      <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        @for (step of steps; track step.number) {
+          <div>
+            <span class="text-4xl md:text-5xl font-extrabold text-[var(--color-accent)]" style="font-family: var(--font-display);">{{ step.number }}</span>
+            <h3 class="mt-3 text-lg font-semibold text-[var(--color-ink)]">{{ step.title }}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{{ step.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Fuente de datos y aviso legal -->
+  <section class="bg-[var(--color-surface)] border-y border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20">
+      <div class="max-w-3xl">
+        <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Origen de los datos y aviso legal</h2>
+        <p class="mt-4 text-[var(--color-ink-soft)]">
+          Los costos de casetas y rutas se calculan con datos de la
+          <a
+            href="https://www.inegi.org.mx/servicios/Ruteo/Default.html"
+            target="_blank"
+            rel="noreferrer"
+            class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">
+            API de Ruteo del INEGI
+          </a>
+          (Instituto Nacional de Estadística y Geografía), consultada en tiempo real para cada búsqueda.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-[var(--color-ink-soft)] list-disc list-inside">
+          <li>La red de caminos que utiliza el INEGI se actualiza de forma periódica, por lo que puede haber diferencias con cambios muy recientes en carreteras o casetas.</li>
+          <li>Los tiempos estimados de viaje asumen condiciones óptimas, sin tráfico, clima ni paradas.</li>
+          <li>Las tarifas de casetas pueden variar respecto al costo real vigente, ya que suelen actualizarse por temporadas y pueden diferir por región.</li>
+          <li>Los resultados son una estimación de apoyo para planear tu viaje; el uso que se les dé es responsabilidad de quien consulta la herramienta.</li>
+          <li>El uso de la calculadora es gratuito y no requiere una cuenta; para evitar abusos del servicio, se aplica un límite de 30 consultas cada 10 minutos por dirección IP.</li>
+        </ul>
+        <p class="mt-6 text-sm text-[var(--color-ink-soft)]">
+          Este sitio es un servicio independiente y no está afiliado al INEGI, a Caminos y Puentes Federales (CAPUFE) ni a la Secretaría de Infraestructura, Comunicaciones y Transportes (SICT).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="relative overflow-hidden bg-[var(--color-ink)]">
+    <img
+      ngSrc="images/cta-mountain-road.jpg"
+      fill
+      alt=""
+      class="object-cover object-bottom opacity-20" />
+    <div class="relative max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-20 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-ink-invert)]">
+        Planea tu próximo viaje con el costo claro desde antes de salir
+      </h2>
+      <div class="mt-8">
+        <a
+          routerLink="/calcular-mi-ruta"
+          class="inline-flex justify-center items-center rounded-lg px-6 py-3 text-sm font-semibold text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors">
+          Calcular mi ruta
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
 <main-footer />

@@ -72,7 +72,7 @@ mongoose.connect(mongoGlobalUrl)
   .catch((err) => console.error("Error al conectar a MongoDB global", err));
 
 // Importar y usar rutas
-//const userRoutes = require("./routes/user.routes");
+const userRoutes = require("./routes/user.routes");
 const mailRoutes = require("./routes/mail.routes");
 //const uploadRoutes = require("./routes/upload.routes");
 const destinationRoutes = require("./routes/destination.routes")
@@ -87,7 +87,7 @@ app.use(
     hsts: process.env.NODE_ENV === "production",
   })
 );
-//app.use("/api/ds/users", userRoutes);
+app.use("/api/ds/users", userRoutes);
 app.use("/api/ds/mail", mailRoutes);
 //app.use("/api/ds/uploads", uploadRoutes);
 app.use("/api/ds/destination",destinationRoutes)
