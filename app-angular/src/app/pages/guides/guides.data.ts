@@ -15,7 +15,7 @@ export const ARTICLES: Article[] = [
     title: 'Tipos de vehículo y ejes excedentes: guía para entender tu tarifa de caseta',
     description:
       'Qué significan las categorías de vehículo (motocicleta, automóvil, autobús, camión) y los "ejes excedentes" que pide la calculadora de PeajesMX, y por qué cambian el costo de una caseta.',
-    publishedDate: '2026-08-17',
+    publishedDate: '2026-08-10',
     readingMinutes: 5,
     contentHtml: `
       <p>

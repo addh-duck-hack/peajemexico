@@ -36,3 +36,65 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
+
+/*
+ * Iconos: antes se cargaba el kit completo de Font Awesome (CSS + fuente,
+ * ~2000 iconos) desde cdnjs en cada página, aunque el sitio solo usa 28.
+ * Se sustituye por SVGs propios (public/icons/fa/, tomados de
+ * @fortawesome/fontawesome-free) referenciados vía mask-image: mismo
+ * markup (<i class="fa-solid fa-route">...</i>) en todas las plantillas,
+ * pero sin request a un CDN externo ni descargar iconos que no se usan.
+ */
+.fa-solid,
+.fa-regular,
+.fa-brands {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  vertical-align: -0.125em;
+}
+
+.fa-arrow-left { -webkit-mask-image: url(/icons/fa/arrow-left.svg); mask-image: url(/icons/fa/arrow-left.svg); }
+.fa-arrow-right { -webkit-mask-image: url(/icons/fa/arrow-right.svg); mask-image: url(/icons/fa/arrow-right.svg); }
+.fa-at { -webkit-mask-image: url(/icons/fa/at.svg); mask-image: url(/icons/fa/at.svg); }
+.fa-car-side { -webkit-mask-image: url(/icons/fa/car-side.svg); mask-image: url(/icons/fa/car-side.svg); }
+.fa-check { -webkit-mask-image: url(/icons/fa/check.svg); mask-image: url(/icons/fa/check.svg); }
+.fa-circle-info { -webkit-mask-image: url(/icons/fa/circle-info.svg); mask-image: url(/icons/fa/circle-info.svg); }
+.fa-circle-xmark { -webkit-mask-image: url(/icons/fa/circle-xmark.svg); mask-image: url(/icons/fa/circle-xmark.svg); }
+.fa-clock-rotate-left { -webkit-mask-image: url(/icons/fa/clock-rotate-left.svg); mask-image: url(/icons/fa/clock-rotate-left.svg); }
+.fa-envelope { -webkit-mask-image: url(/icons/fa/envelope.svg); mask-image: url(/icons/fa/envelope.svg); }
+.fa-gauge-high { -webkit-mask-image: url(/icons/fa/gauge-high.svg); mask-image: url(/icons/fa/gauge-high.svg); }
+.fa-gift { -webkit-mask-image: url(/icons/fa/gift.svg); mask-image: url(/icons/fa/gift.svg); }
+.fa-hand-holding-dollar { -webkit-mask-image: url(/icons/fa/hand-holding-dollar.svg); mask-image: url(/icons/fa/hand-holding-dollar.svg); }
+.fa-hourglass-half { -webkit-mask-image: url(/icons/fa/hourglass-half.svg); mask-image: url(/icons/fa/hourglass-half.svg); }
+.fa-list-check { -webkit-mask-image: url(/icons/fa/list-check.svg); mask-image: url(/icons/fa/list-check.svg); }
+.fa-location-crosshairs { -webkit-mask-image: url(/icons/fa/location-crosshairs.svg); mask-image: url(/icons/fa/location-crosshairs.svg); }
+.fa-map-location { -webkit-mask-image: url(/icons/fa/map-location.svg); mask-image: url(/icons/fa/map-location.svg); }
+.fa-map-location-dot { -webkit-mask-image: url(/icons/fa/map-location-dot.svg); mask-image: url(/icons/fa/map-location-dot.svg); }
+.fa-map-pin { -webkit-mask-image: url(/icons/fa/map-pin.svg); mask-image: url(/icons/fa/map-pin.svg); }
+.fa-message { -webkit-mask-image: url(/icons/fa/message.svg); mask-image: url(/icons/fa/message.svg); }
+.fa-phone { -webkit-mask-image: url(/icons/fa/phone.svg); mask-image: url(/icons/fa/phone.svg); }
+.fa-power-off { -webkit-mask-image: url(/icons/fa/power-off.svg); mask-image: url(/icons/fa/power-off.svg); }
+.fa-route { -webkit-mask-image: url(/icons/fa/route.svg); mask-image: url(/icons/fa/route.svg); }
+.fa-spinner { -webkit-mask-image: url(/icons/fa/spinner.svg); mask-image: url(/icons/fa/spinner.svg); }
+.fa-triangle-exclamation { -webkit-mask-image: url(/icons/fa/triangle-exclamation.svg); mask-image: url(/icons/fa/triangle-exclamation.svg); }
+.fa-truck-moving { -webkit-mask-image: url(/icons/fa/truck-moving.svg); mask-image: url(/icons/fa/truck-moving.svg); }
+.fa-user { -webkit-mask-image: url(/icons/fa/user.svg); mask-image: url(/icons/fa/user.svg); }
+.fa-user-check { -webkit-mask-image: url(/icons/fa/user-check.svg); mask-image: url(/icons/fa/user-check.svg); }
+.fa-whatsapp { -webkit-mask-image: url(/icons/fa/whatsapp.svg); mask-image: url(/icons/fa/whatsapp.svg); }
+
+.fa-spin {
+  animation: fa-spin 1s linear infinite;
+}
+
+@keyframes fa-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

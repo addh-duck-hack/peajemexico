@@ -5,6 +5,7 @@ import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
 import type * as Leaflet from 'leaflet';
 import { GeoJsonObject } from 'geojson';
+import { DOCUMENT } from '@angular/common';
 import { SkeletonContentLoader } from 'src/app/shared/components/skeleton/skeleton-content-loader/skeleton-content-loader';
 import { DataCostInegi } from 'src/app/shared/interfaces/route.cost.interface';
 import { DetailCostData } from 'src/app/shared/interfaces/detail-cost-data.interface';
@@ -72,6 +73,7 @@ export default class PriceCalculator {
   inegiService = inject(InegiService);
   userService = inject(UserService);
   private seo = inject(SeoService);
+  private doc = inject(DOCUMENT);
   routeHistoryService = inject(RouteHistoryService);
 
   // Variables para Leaflet para los mapas
@@ -87,6 +89,7 @@ export default class PriceCalculator {
     // El bundle de leaflet se empaqueta como CommonJS y esbuild solo expone un default export
     // (todo el namespace queda en mod.default), por lo que hay que desenvolverlo aquí.
     afterNextRender(() => {
+      this.loadLeafletStyles();
       import('leaflet')
         .then((mod) => {
           L = (mod as unknown as { default?: typeof Leaflet }).default ?? mod;
@@ -94,6 +97,18 @@ export default class PriceCalculator {
         })
         .catch((error) => console.error('No se pudo cargar Leaflet:', error));
     });
+  }
+
+  // La hoja de estilos de Leaflet (antes en index.html vía unpkg, cargándose en
+  // todas las páginas del sitio) se autohospeda en public/leaflet/ y se inyecta
+  // aquí, solo cuando alguien entra a esta página.
+  private loadLeafletStyles(): void {
+    if (this.doc.getElementById('leaflet-styles')) return;
+    const link = this.doc.createElement('link');
+    link.id = 'leaflet-styles';
+    link.rel = 'stylesheet';
+    link.href = 'leaflet/leaflet.css';
+    this.doc.head.appendChild(link);
   }
 
   private initMap(): void{

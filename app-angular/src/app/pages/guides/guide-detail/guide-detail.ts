@@ -49,6 +49,16 @@ export default class GuideDetail {
         dateModified: article.updatedDate ?? article.publishedDate,
         author: { '@type': 'Organization', name: 'PeajesMX' },
       });
+
+      this.seo.setJsonLd('breadcrumb', {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Guías', item: 'https://peajesmx.com/guias/' },
+          { '@type': 'ListItem', position: 3, name: article.title, item: `https://peajesmx.com/guias/${article.slug}/` },
+        ],
+      });
     });
   }
 }

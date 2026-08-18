@@ -23,17 +23,11 @@
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Roboto+Slab:wght@600;700;800&display=swap" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""/>
+    <!-- El kit completo de Font Awesome (cdnjs) se quitó: el sitio solo usa 28 iconos,
+         ahora servidos como SVG propios vía mask-image en src/styles.css. -->
+    <!-- La hoja de Leaflet también se quitó de aquí: se cargaba en todas las páginas
+         aunque solo se usa en /calcular-mi-ruta. Ahora se importa junto con el JS de
+         Leaflet, solo cuando esa página se carga (ver price-calculator.ts). -->
   </head>
   <body>
     <app-root></app-root>
