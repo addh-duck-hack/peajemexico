@@ -19,5 +19,14 @@ export default class Legal {
       title: 'Aviso legal | PeajesMX',
       description: 'Aviso legal y términos de uso de PeajesMX.'
     });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Legales', item: 'https://peajesmx.com/legales/' },
+      ],
+    });
   }
 }

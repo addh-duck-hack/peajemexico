@@ -22,6 +22,33 @@ export default class ContactUs {
       title: 'Contacto | PeajesMX',
       description: 'Ponte en contacto con PeajesMX para dudas, soporte o cotizaciones de acceso vía API a la calculadora de casetas.'
     });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Contacto', item: 'https://peajesmx.com/contacto/' },
+      ],
+    });
+
+    this.seo.setJsonLd('contactpage', {
+      '@context': 'https://schema.org',
+      '@type': 'ContactPage',
+      url: 'https://peajesmx.com/contacto/',
+      mainEntity: {
+        '@type': 'Organization',
+        name: 'PeajesMX',
+        contactPoint: [{
+          '@type': 'ContactPoint',
+          telephone: '+52-566-165-3418',
+          email: 'redes.sociales@duck-hack.com',
+          contactType: 'customer service',
+          areaServed: 'MX',
+          availableLanguage: ['es'],
+        }],
+      },
+    });
   }
 
   fullName = signal('');

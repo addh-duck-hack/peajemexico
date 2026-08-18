@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal, afterNextRender } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { InegiService } from 'src/app/services/inegi.service';
 import { UserService } from 'src/app/services/user.service';
 import { DestinationInegi } from 'src/app/shared/interfaces/destination.interface';
@@ -22,7 +23,7 @@ let L: typeof Leaflet;
 
 @Component({
   selector: 'price-calculator',
-  imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter, AdUnit],
+  imports: [SkeletonContentLoader, DetailCostItem, Navbar, MainFooter, AdUnit, RouterLink],
   templateUrl: './price-calculator.html',
   styleUrl: './price-calculator.css'
 })
@@ -84,6 +85,33 @@ export default class PriceCalculator {
       path: 'calcular-mi-ruta',
       title: 'Calcula el costo de tu ruta | PeajesMX',
       description: 'Calcula el costo de las casetas para tu ruta en México, con uno o varios destinos y ajustado a tu tipo de vehículo.'
+    });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Calcular mi ruta', item: 'https://peajesmx.com/calcular-mi-ruta/' },
+      ],
+    });
+
+    this.seo.setJsonLd('webapplication', {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Calculadora de casetas PeajesMX',
+      url: 'https://peajesmx.com/calcular-mi-ruta/',
+      applicationCategory: 'TravelApplication',
+      operatingSystem: 'Any (navegador web)',
+      browserRequirements: 'Requiere JavaScript',
+      inLanguage: 'es-MX',
+      description: 'Calcula el costo de las casetas para una ruta en México con uno o varios destinos, ajustado a tipo de vehículo y ejes excedentes, usando datos del INEGI.',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'MXN',
+        description: 'Cálculo de costo de casetas sin necesidad de crear cuenta, hasta 30 consultas cada 10 minutos por dirección IP.',
+      },
     });
     // Leaflet depende de window/document: se carga solo en el navegador, nunca durante el prerender.
     // El bundle de leaflet se empaqueta como CommonJS y esbuild solo expone un default export

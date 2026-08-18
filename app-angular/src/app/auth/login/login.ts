@@ -6,6 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { SeoService } from 'src/app/services/seo.service';
 
 interface Benefit {
   icon: string;
@@ -47,9 +48,14 @@ export default class Login {
   // Consumo de servicios
   userService = inject(UserService)
   router = inject(Router)
+  private seo = inject(SeoService);
   userSession = signal<User>;
 
   constructor(){
+    // No hay HTML prerenderizado propio para esta ruta (RenderMode.Client en
+    // app.routes.server.ts) y ya está bloqueada en robots.txt; noindex evita
+    // que llegue a indexarse sin contenido si algún enlace externo la referencia.
+    this.seo.setNoIndex();
     if(this.userService.isTokenValid()){
       this.router.navigate(['/calcular-mi-ruta']);
     }

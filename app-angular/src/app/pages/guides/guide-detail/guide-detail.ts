@@ -22,8 +22,21 @@ export default class GuideDetail {
 
   article = computed(() => ARTICLES.find((item) => item.slug === this.slug()));
 
-  // Otras guías para sugerir al final del artículo (excluye la actual)
-  otherArticles = computed(() => ARTICLES.filter((item) => item.slug !== this.slug()));
+  // Otras guías para sugerir al final del artículo: primero las de la misma
+  // categoría (más relevantes), luego se rellena con las más recientes, con
+  // un tope fijo. Con 2 artículos no se nota, pero evita que esto se vuelva
+  // una grilla de 15+ tarjetas sin criterio cuando la sección crezca.
+  private static readonly MAX_SUGGESTED = 3;
+
+  otherArticles = computed(() => {
+    const current = this.article();
+    const rest = ARTICLES.filter((item) => item.slug !== this.slug());
+    if (!current) return rest.slice(0, GuideDetail.MAX_SUGGESTED);
+
+    const sameCategory = rest.filter((item) => item.category === current.category);
+    const otherCategory = rest.filter((item) => item.category !== current.category);
+    return [...sameCategory, ...otherCategory].slice(0, GuideDetail.MAX_SUGGESTED);
+  });
 
   constructor() {
     effect(() => {
@@ -45,9 +58,17 @@ export default class GuideDetail {
         '@type': 'Article',
         headline: article.title,
         description: article.description,
+        image: [article.image ?? 'https://peajesmx.com/images/hero-highway.jpg'],
         datePublished: article.publishedDate,
         dateModified: article.updatedDate ?? article.publishedDate,
-        author: { '@type': 'Organization', name: 'PeajesMX' },
+        inLanguage: 'es-MX',
+        author: { '@type': 'Organization', name: 'PeajesMX', url: 'https://peajesmx.com/' },
+        publisher: {
+          '@type': 'Organization',
+          name: 'PeajesMX',
+          logo: { '@type': 'ImageObject', url: 'https://peajesmx.com/images/logo-mark.svg' }
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `https://peajesmx.com/guias/${article.slug}/` },
       });
 
       this.seo.setJsonLd('breadcrumb', {

@@ -28,8 +28,8 @@ export class SeoService {
   update(data: SeoData): void {
     // nginx sirve cada ruta prerenderizada como directorio (ej. servicios/index.html)
     // y redirige "/servicios" -> "/servicios/". La URL canónica debe coincidir con esa
-    // URL final (con "/") para que no dependa de seguir una redirección.
-    const url = data.path ? `${SITE_URL}/${data.path}/` : SITE_URL;
+    // URL final (con "/", inclusive el home) para que no dependa de seguir una redirección.
+    const url = `${SITE_URL}/${data.path ? data.path + '/' : ''}`;
     const image = data.image ?? DEFAULT_IMAGE;
 
     this.titleService.setTitle(data.title);
@@ -51,6 +51,11 @@ export class SeoService {
     this.meta.updateTag({ name: 'twitter:image', content: image });
 
     this.setCanonical(url);
+  }
+
+  /** Marca la página actual como no indexable (páginas solo-CSR con token en la URL: login, reset-password, verify). */
+  setNoIndex(): void {
+    this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
   }
 
   /** Inyecta (o reemplaza) un bloque de datos estructurados JSON-LD identificado por `id`. */

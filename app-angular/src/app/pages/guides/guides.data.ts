@@ -5,9 +5,13 @@ import { Article } from 'src/app/shared/interfaces/article.interface';
  *
  * Para publicar uno nuevo:
  * 1. Agrega un objeto a este arreglo (slug único, sin acentos ni espacios).
- * 2. El artículo se prerenderiza automáticamente (ver app.routes.server.ts,
+ * 2. Asígnale una `category` de las ya existentes en ArticleCategory
+ *    (article.interface.ts); solo agrega una categoría nueva ahí si de
+ *    verdad vas a agrupar varios artículos bajo ese tema.
+ * 3. El artículo se prerenderiza automáticamente (ver app.routes.server.ts,
  *    que lee este mismo arreglo para generar sus rutas estáticas).
- * 3. Agrega su URL a public/sitemap.xml para que se indexe cuanto antes.
+ * 4. Agrega su URL a public/sitemap.xml (con <lastmod> = publishedDate) para
+ *    que se indexe cuanto antes.
  */
 export const ARTICLES: Article[] = [
   {
@@ -15,6 +19,7 @@ export const ARTICLES: Article[] = [
     title: 'Tipos de vehículo y ejes excedentes: guía para entender tu tarifa de caseta',
     description:
       'Qué significan las categorías de vehículo (motocicleta, automóvil, autobús, camión) y los "ejes excedentes" que pide la calculadora de PeajesMX, y por qué cambian el costo de una caseta.',
+    category: 'Vehículos y ejes',
     publishedDate: '2026-08-10',
     readingMinutes: 5,
     contentHtml: `
@@ -74,6 +79,7 @@ export const ARTICLES: Article[] = [
     title: 'Cómo se calculan las tarifas de casetas en México',
     description:
       'De dónde salen los datos que usa PeajesMX para estimar el costo de tu ruta, qué factores influyen en la tarifa de una caseta y qué limitaciones tiene este tipo de cálculo.',
+    category: 'Tarifas y cálculo',
     publishedDate: '2026-08-17',
     readingMinutes: 4,
     contentHtml: `

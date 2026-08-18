@@ -221,6 +221,10 @@
                     </div>
                     <!-- Termina optionInput para seleccionar el numero de ejes excedentes, solo cuando el vehículo es camion de 2 ejes en adelante del cual se requiere la consulta  -->
                     <!-- ------------------------------------------------------------------------------- -->
+                    <p class="mt-2 text-xs text-[var(--color-ink-soft)]">
+                      ¿No sabes qué son los ejes excedentes?
+                      <a routerLink="/guias/tipos-de-vehiculo-y-ejes-excedentes" class="font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline underline-offset-2">Consulta la guía</a>.
+                    </p>
                     <!-- Boton para obtener costos de casetas -->
                     <button
                       (click)="validateFormToCalculation()"
@@ -309,7 +313,7 @@
           <div class="flex items-center justify-between mb-4">
             <div class="flex-shrink-0">
               <div class="flex items-center text-[var(--color-ink)]">
-                <i class="fa-solid fa-map-location mr-3 text-[var(--color-accent)]"></i><h3 class="text-xl font-bold">Mapa</h3>
+                <i class="fa-solid fa-map-location mr-3 text-[var(--color-accent)]"></i><h2 class="text-xl font-bold">Mapa</h2>
               </div>
               <span class="text-base font-normal text-[var(--color-ink-soft)]">Puedes presionar los marcadores para seleccionar un punto de origen o destino directamente desde el mapa</span>
             </div>

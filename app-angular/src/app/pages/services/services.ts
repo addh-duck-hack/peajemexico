@@ -41,6 +41,34 @@ export default class Services {
       title: 'Planes y servicios | PeajesMX',
       description: 'Conoce los planes de PeajesMX: calculadora gratuita sin registro, cuenta registrada con más consultas, y acceso empresarial vía API.'
     });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Servicios', item: 'https://peajesmx.com/servicios/' },
+      ],
+    });
+
+    this.seo.setJsonLd('service', {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: 'Calculadora de costos de casetas PeajesMX',
+      provider: { '@type': 'Organization', name: 'PeajesMX', url: 'https://peajesmx.com/' },
+      areaServed: 'MX',
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Niveles de acceso',
+        itemListElement: this.plans.map((plan) => ({
+          '@type': 'Offer',
+          name: plan.name,
+          price: plan.price === 'Gratis' ? '0' : undefined,
+          priceCurrency: plan.price === 'Gratis' ? 'MXN' : undefined,
+          description: `${plan.limit} ${plan.limitNote}`,
+        })),
+      },
+    });
   }
 
   plans: Plan[] = [

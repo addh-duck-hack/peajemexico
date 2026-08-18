@@ -18,5 +18,14 @@ export default class PrivacyPolicy {
       title: 'Aviso de privacidad | PeajesMX',
       description: 'Conoce el aviso de privacidad de PeajesMX y cómo tratamos tus datos personales.'
     });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Privacidad', item: 'https://peajesmx.com/privacidad/' },
+      ],
+    });
   }
 }

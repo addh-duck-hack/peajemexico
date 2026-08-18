@@ -22,5 +22,30 @@ export default class GuidesList {
       title: 'Guías sobre casetas y carreteras en México | PeajesMX',
       description: 'Artículos y guías de PeajesMX sobre tarifas de casetas, tipos de vehículo, ejes excedentes y cómo planear tu ruta en la red carretera de México.'
     });
+
+    this.seo.setJsonLd('breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://peajesmx.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Guías', item: 'https://peajesmx.com/guias/' },
+      ],
+    });
+
+    this.seo.setJsonLd('collection', {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Guías sobre casetas y carreteras en México',
+      url: 'https://peajesmx.com/guias/',
+      isPartOf: { '@type': 'WebSite', name: 'PeajesMX', url: 'https://peajesmx.com/' },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: this.articles.map((article, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: `https://peajesmx.com/guias/${article.slug}/`,
+        })),
+      },
+    });
   }
 }

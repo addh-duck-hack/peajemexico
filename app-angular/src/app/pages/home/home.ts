@@ -32,18 +32,44 @@ export default class Home {
       title: 'PeajesMX — Calculadora de costos de casetas en México',
       description: 'Calcula gratis el costo de las casetas de tu ruta en México con uno o varios destinos, ajustado a tu tipo de vehículo. Sin necesidad de crear una cuenta.'
     });
+    // Datos de identificación (RFC, domicilio, contacto) tomados de /legales, la
+    // fuente formal de estos datos (ver legal.html, sección "Identificación de la Empresa").
     this.seo.setJsonLd('organization', {
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: 'PeajesMX',
-      url: 'https://peajesmx.com',
-      logo: 'https://peajesmx.com/images/logo-mark.svg'
+      legalName: 'Duck Hack',
+      alternateName: 'PeajesMX.com',
+      url: 'https://peajesmx.com/',
+      logo: 'https://peajesmx.com/images/logo-mark.svg',
+      image: 'https://peajesmx.com/images/hero-highway.jpg',
+      description: 'Calculadora gratuita del costo de casetas para rutas con uno o varios destinos en México, basada en datos del INEGI.',
+      taxID: 'CAJA911127IH1',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Priv. Flor de Azucena No 112, Col. Paseos de Chavarría',
+        addressLocality: 'Mineral de la Reforma',
+        addressRegion: 'Hidalgo',
+        postalCode: '42186',
+        addressCountry: 'MX'
+      },
+      contactPoint: [{
+        '@type': 'ContactPoint',
+        telephone: '+52-566-165-3418',
+        email: 'redes.sociales@duck-hack.com',
+        contactType: 'customer service',
+        areaServed: 'MX',
+        availableLanguage: ['es']
+      }],
+      sameAs: ['https://mx.duck-hack.cloud']
     });
     this.seo.setJsonLd('website', {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'PeajesMX',
-      url: 'https://peajesmx.com'
+      url: 'https://peajesmx.com/',
+      inLanguage: 'es-MX',
+      publisher: { '@type': 'Organization', name: 'PeajesMX' }
     });
   }
 

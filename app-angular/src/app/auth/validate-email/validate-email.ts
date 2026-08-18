@@ -7,6 +7,7 @@ import { map } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
+import { SeoService } from 'src/app/services/seo.service';
 
 @Component({
   selector: 'app-validate-email',
@@ -31,8 +32,11 @@ export default class ValidateEmail {
   // Consumo de servicios
   userService = inject(UserService);
   router = inject(Router);
+  private seo = inject(SeoService);
 
   constructor(){
+    // Ruta solo-CSR, sin HTML prerenderizado propio y ya bloqueada en robots.txt.
+    this.seo.setNoIndex();
     if(!this.token()){
       this.router.navigate(['/']);
     }
