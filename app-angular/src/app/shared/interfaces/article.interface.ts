@@ -8,7 +8,8 @@ export type ArticleCategory =
   | 'Tarifas y cálculo'
   | 'Vehículos y ejes'
   | 'Rutas y carreteras'
-  | 'Legal y datos oficiales';
+  | 'Legal y datos oficiales'
+  | 'Pagos y TAG';
 
 export interface Article {
   /** Segmento de URL, ej. 'tipos-de-vehiculo-y-ejes-excedentes' -> /guias/tipos-de-vehiculo-y-ejes-excedentes */
