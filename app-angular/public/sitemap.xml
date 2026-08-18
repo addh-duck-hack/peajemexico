@@ -11,6 +11,22 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://peajesmx.com/guias</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Cada artículo nuevo en src/app/pages/guides/guides.data.ts debe agregarse aquí también -->
+  <url>
+    <loc>https://peajesmx.com/guias/tipos-de-vehiculo-y-ejes-excedentes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://peajesmx.com/guias/como-se-calculan-las-tarifas-de-casetas-en-mexico</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://peajesmx.com/servicios</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

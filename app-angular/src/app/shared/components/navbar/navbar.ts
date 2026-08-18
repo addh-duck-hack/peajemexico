@@ -22,9 +22,10 @@ export class Navbar {
 
   menuOptions:NavbarItem[] = [
     { id: 1, name: 'Inicio', route: '/' },
-    { id: 2, name: 'Servicios', route: '/servicios' },
-    { id: 3, name: 'Contacto', route: '/contacto' },
-    { id: 4, name: 'Legales', route: '/legales' }
+    { id: 2, name: 'Guías', route: '/guias' },
+    { id: 3, name: 'Servicios', route: '/servicios' },
+    { id: 4, name: 'Contacto', route: '/contacto' },
+    { id: 5, name: 'Legales', route: '/legales' }
   ]
 
   openMobile = signal(false)

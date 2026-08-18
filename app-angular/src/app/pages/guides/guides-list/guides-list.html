@@ -1,0 +1,35 @@
+<navbar />
+
+<main class="bg-[var(--color-bg)]">
+  <section class="border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+      <span class="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] text-xs font-semibold px-3 py-1 tracking-wide uppercase">
+        Guías
+      </span>
+      <h1 class="mt-4 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Guías sobre casetas y carreteras en México</h1>
+      <p class="mt-2 text-[var(--color-ink-soft)] max-w-2xl">
+        Artículos para entender cómo se calculan las tarifas de casetas, qué significan las categorías de
+        vehículo y cómo planear mejor tus rutas por la red carretera federal.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (article of articles; track article.slug) {
+        <a
+          [routerLink]="['/guias', article.slug]"
+          class="flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 hover:border-[var(--color-accent)] transition-colors">
+          <span class="text-xs font-medium text-[var(--color-ink-soft)]">
+            {{ article.publishedDate }} &middot; {{ article.readingMinutes }} min de lectura
+          </span>
+          <h2 class="mt-2 text-lg font-semibold text-[var(--color-ink)]">{{ article.title }}</h2>
+          <p class="mt-2 text-sm text-[var(--color-ink-soft)] flex-1">{{ article.description }}</p>
+          <span class="mt-4 text-sm font-semibold text-[var(--color-accent)]">Leer guía &rarr;</span>
+        </a>
+      }
+    </div>
+  </section>
+</main>
+
+<main-footer />
