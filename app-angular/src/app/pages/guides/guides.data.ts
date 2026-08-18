@@ -113,16 +113,17 @@ export const ARTICLES: Article[] = [
         que vale la pena conocer antes de usarlo para planear un viaje:
       </p>
       <ul>
-        <li>La red de caminos que utiliza el INEGI se actualiza de forma periódica, por lo que puede haber
-          diferencias con cambios muy recientes en carreteras o casetas.</li>
-        <li>Los tiempos estimados de viaje asumen condiciones óptimas, sin tráfico, clima ni paradas.</li>
-        <li>Las tarifas mostradas pueden variar respecto al costo real vigente en la caseta.</li>
+        <li>El mapa de carreteras del INEGI no se actualiza al instante: una caseta nueva o un cambio muy
+          reciente en la red puede tardar en reflejarse en el cálculo.</li>
+        <li>El tiempo de viaje que ves es un estimado en condiciones ideales; no considera tráfico, clima ni
+          paradas en el camino.</li>
+        <li>La tarifa cobrada en la caseta puede diferir ligeramente de la mostrada aquí, sobre todo si hubo
+          un ajuste de temporada reciente.</li>
       </ul>
       <p>
-        PeajesMX es un servicio independiente y no está afiliado al INEGI, a Caminos y Puentes Federales
-        (CAPUFE) ni a la Secretaría de Infraestructura, Comunicaciones y Transportes (SICT); el objetivo de la
-        herramienta es darte una referencia confiable para presupuestar tu viaje con anticipación, no sustituir
-        la tarifa oficial cobrada en cada caseta.
+        PeajesMX no publica ni fija estas tarifas: solo las consulta y las presenta de forma clara para que
+        puedas planear tu viaje con anticipación. Si buscas el detalle legal completo de esta independencia
+        frente al INEGI, CAPUFE y la SICT, está en nuestro <a href="/legales">Aviso Legal</a>.
       </p>
     `
   }
