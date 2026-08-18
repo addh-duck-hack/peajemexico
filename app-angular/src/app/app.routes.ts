@@ -30,6 +30,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/price-calculator/price-calculator')
   },
   {
+    path: 'guias',
+    loadComponent: () => import('./pages/guides/guides-list/guides-list')
+  },
+  {
+    path: 'guias/:slug',
+    loadComponent: () => import('./pages/guides/guide-detail/guide-detail')
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login')
   },
