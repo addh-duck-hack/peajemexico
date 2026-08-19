@@ -2,7 +2,14 @@
 FROM node:22-slim AS build
 WORKDIR /app
 COPY ./app-angular/ .
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
+# El @angular/cli y @angular/build del proyecto ya están en package.json (devDependencies)
+# y "npm run build" los resuelve localmente (node_modules/.bin/ng) sin necesitar un CLI
+# global. Antes se instalaba "@angular/cli @angular-devkit/build-angular" global sin fijar
+# versión, lo que jalaba "latest" (Angular 22) en vez de la versión 20 que usa este proyecto
+# -y ese "latest" a veces queda roto en el registro de npm justo tras publicarse, como pasó
+# el 2026-08-19 con @schematics/angular@22.1.5 (ETARGET). "npm ci" usa el package-lock.json
+# tal cual, así el build es reproducible y no depende de qué versión sea "latest" ese día.
+RUN npm ci
 RUN npm run build -- --configuration production
 RUN echo "Verificando archivos en dist:" && ls -la /app/dist/app-angular/browser || echo "No se encontró /app/dist/app-angular/browser"
 
