@@ -10,5 +10,5 @@ import { environment } from '@environments/environment';
 })
 export class MainFooter {
   env = environment
-  logo = 'images/logo-mark.svg';
+  logo = 'logo/logo-color.png';
 }

@@ -144,7 +144,7 @@ export const ARTICLES: Article[] = [
     description:
       'Qué cambió con las nuevas reglas de CAPUFE del 30 de julio de 2026, si de verdad desapareció el efectivo en las casetas, y qué hacer si tu vehículo no trae TAG.',
     category: 'Pagos y TAG',
-    publishedDate: '2026-08-18',
+    publishedDate: '2026-08-02',
     readingMinutes: 5,
     contentHtml: `
       <p>
@@ -205,7 +205,7 @@ export const ARTICLES: Article[] = [
     description:
       'Comparamos costo de adquisición, cobertura y trámite de los principales TAG de telepeaje en México para ayudarte a elegir antes de tu próximo viaje.',
     category: 'Pagos y TAG',
-    publishedDate: '2026-08-18',
+    publishedDate: '2026-08-04',
     readingMinutes: 5,
     contentHtml: `
       <p>
@@ -266,7 +266,7 @@ export const ARTICLES: Article[] = [
     description:
       'El ajuste de tarifas de CAPUFE de abril de 2026: cuánto subieron las casetas, en qué autopistas, y por qué el resultado de la calculadora puede diferir de lo que recordabas.',
     category: 'Tarifas y cálculo',
-    publishedDate: '2026-08-18',
+    publishedDate: '2026-07-08',
     readingMinutes: 4,
     contentHtml: `
       <p>
@@ -321,7 +321,7 @@ export const ARTICLES: Article[] = [
     description:
       'El costo real de casetas desde la Ciudad de México hacia Acapulco, Guadalajara, Puebla, Cancún y Puerto Vallarta en automóvil, calculado con datos del INEGI.',
     category: 'Rutas y carreteras',
-    publishedDate: '2026-08-18',
+    publishedDate: '2026-08-13',
     readingMinutes: 4,
     contentHtml: `
       <p>
@@ -341,7 +341,7 @@ export const ARTICLES: Article[] = [
           mayoría de la gente parte en dos días.</li>
       </ul>
       <p>
-        Estas cifras se consultaron el 18 de agosto de 2026 y son solo de referencia: las tarifas de casetas
+        Estas cifras se consultaron el 13 de agosto de 2026 y son solo de referencia: las tarifas de casetas
         cambian por temporada y pueden ajustarse en cualquier momento (como pasó con el
         <a href="/guias/aumento-tarifas-casetas-mexico-2026">aumento de abril de 2026</a>), así que el número
         exacto de tu viaje puede variar ligeramente respecto a esta lista.

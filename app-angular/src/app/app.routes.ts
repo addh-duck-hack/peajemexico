@@ -38,6 +38,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/guides/guide-detail/guide-detail')
   },
   {
+    path: 'noticias',
+    loadComponent: () => import('./pages/news/news-list/news-list')
+  },
+  {
+    path: 'noticias/:slug',
+    loadComponent: () => import('./pages/news/news-detail/news-detail')
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login')
   },

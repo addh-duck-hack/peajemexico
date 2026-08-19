@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+/*
+ * El cuerpo de la nota se inserta con [innerHTML], así que esos nodos nunca
+ * reciben el atributo de encapsulado de Angular. ::ng-deep es necesario aquí
+ * para poder darle estilo (mismo criterio que guide-detail.css).
+ */
+.article-content ::ng-deep p {
+  margin-top: 1rem;
+  line-height: 1.75;
+}
+
+.article-content ::ng-deep h2 {
+  margin-top: 2.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.article-content ::ng-deep ul {
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.article-content ::ng-deep li {
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.article-content ::ng-deep a {
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-content ::ng-deep a:hover {
+  color: var(--color-accent-hover);
+}
+
+.article-content ::ng-deep strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}

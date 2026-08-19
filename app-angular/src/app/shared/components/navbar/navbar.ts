@@ -14,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrl: './navbar.css'
 })
 export class Navbar {
-  logo = 'images/logo-mark.svg';
+  logo = 'logo/logo-color.png';
   env = environment;
   private router = inject(Router);
   private userService = inject(UserService);
@@ -23,9 +23,10 @@ export class Navbar {
   menuOptions:NavbarItem[] = [
     { id: 1, name: 'Inicio', route: '/' },
     { id: 2, name: 'Guías', route: '/guias' },
-    { id: 3, name: 'Servicios', route: '/servicios' },
-    { id: 4, name: 'Contacto', route: '/contacto' },
-    { id: 5, name: 'Legales', route: '/legales' }
+    { id: 3, name: 'Noticias', route: '/noticias' },
+    { id: 4, name: 'Servicios', route: '/servicios' },
+    { id: 5, name: 'Contacto', route: '/contacto' },
+    { id: 6, name: 'Legales', route: '/legales' }
   ]
 
   openMobile = signal(false)

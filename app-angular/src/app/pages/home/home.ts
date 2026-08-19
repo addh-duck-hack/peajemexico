@@ -41,7 +41,7 @@ export default class Home {
       legalName: 'Duck Hack',
       alternateName: 'PeajesMX.com',
       url: 'https://peajesmx.com/',
-      logo: 'https://peajesmx.com/images/logo-mark.svg',
+      logo: 'https://peajesmx.com/logo/logo-color.png',
       image: 'https://peajesmx.com/images/hero-highway.jpg',
       description: 'Calculadora gratuita del costo de casetas para rutas con uno o varios destinos en México, basada en datos del INEGI.',
       taxID: 'CAJA911127IH1',

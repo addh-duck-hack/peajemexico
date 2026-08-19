@@ -66,7 +66,7 @@ export default class GuideDetail {
         publisher: {
           '@type': 'Organization',
           name: 'PeajesMX',
-          logo: { '@type': 'ImageObject', url: 'https://peajesmx.com/images/logo-mark.svg' }
+          logo: { '@type': 'ImageObject', url: 'https://peajesmx.com/logo/logo-color.png', width: 658, height: 615 }
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': `https://peajesmx.com/guias/${article.slug}/` },
       });
