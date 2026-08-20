@@ -28,9 +28,19 @@ services:
       # Dominios permitidos para el header Host de las peticiones que le
       # reenvía nginx (protección SSRF de @angular/ssr); sin esto, cada
       # visita a /guias o /noticias cae de vuelta a un shell sin contenido
-      # server-rendered. Ver el error real documentado en el commit que
-      # introdujo esta variable.
-      NG_ALLOWED_HOSTS: "peajesmx.com,www.peajesmx.com"
+      # server-rendered. Se lee de un .env en la raíz del proyecto (ver
+      # .env.example) -si no existe ese archivo, usa el default de abajo.
+      NG_ALLOWED_HOSTS: "${NG_ALLOWED_HOSTS:-peajesmx.com,www.peajesmx.com}"
+      # Por defecto @angular/ssr NO confía en x-forwarded-for (solo en
+      # x-forwarded-host y x-forwarded-proto) y cae al mismo shell sin
+      # contenido si lo recibe sin haberlo confiado explícitamente -esto es
+      # lo que realmente rompía /guias y /noticias en producción, confirmado
+      # en los logs de este contenedor ("... but trustProxyHeaders was not
+      # set up to allow it"). nginx.conf ya limpia X-Forwarded-Scheme (un
+      # header que Nginx Proxy Manager agrega y que Angular ni reconoce).
+      # Fijo aquí (no en .env): está acoplado 1:1 a los proxy_set_header de
+      # nginx.conf, si se edita uno sin el otro se reintroduce el bug.
+      NG_TRUST_PROXY_HEADERS: "x-forwarded-for,x-forwarded-proto"
     networks:
       - peajemx-frontend-net
       - peajemx-services-net

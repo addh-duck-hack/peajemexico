@@ -1,17 +1,30 @@
-// Migra a Mongo el contenido que hasta ahora vivía "hardcodeado" en
-// app-angular/src/app/pages/guides/guides.data.ts y .../news/news.data.ts,
-// para no perderlo al cortar el sitio a servir /guias y /noticias desde la
-// base de datos.
+// Migra a Mongo el contenido que hasta hace poco vivía "hardcodeado" en
+// app-angular/src/app/pages/guides/guides.data.ts y .../news/news.data.ts
+// (ya borrados del repo), para no perderlo al cortar el sitio a servir
+// /guias y /noticias desde la base de datos.
 //
-// Uso: node scripts/seed-content.js   (desde backend/, con un .env con
-// MONGO_URL_GLOBAL apuntando a la base correcta -local o producción-).
+// A diferencia de la versión anterior de este archivo, este NO se corre con
+// "node": es un script para pegar directo en la consola de mongosh (o
+// correrlo con --file). No usa Mongoose ni "require" -las colecciones
+// "guides" y "newsarticles" se crean solas en el primer insert-.
+//
+// Uso:
+//   1. Conéctate a la base correcta -local o producción, la misma que usa
+//      MONGO_URL_GLOBAL en el backend-:
+//        mongosh "mongodb://usuario:password@host:puerto/nombre_basedatos"
+//   2. Pega todo el contenido de este archivo en la consola y da Enter.
+//      (o, sin abrir la consola interactiva: mongosh "<connection string>" --file backend/scripts/seed-content.mongosh.js)
 //
 // Es seguro correrlo más de una vez: hace upsert por slug (no duplica ni
 // pisa campos que no estén en este archivo).
-require("dotenv").config();
-const mongoose = require("mongoose");
-const { Guide } = require("../models/guide.model");
-const { NewsArticle } = require("../models/news-article.model");
+
+// Índice único por slug, igual al que Mongoose crea automáticamente desde
+// los schemas (guide.model.js / news-article.model.js) la primera vez que el
+// backend se conecta. Crearlo aquí también es redundante si el backend ya
+// corrió al menos una vez, pero no hace daño y deja la base correcta si este
+// script se corre antes de desplegar el backend.
+db.guides.createIndex({ slug: 1 }, { unique: true });
+db.newsarticles.createIndex({ slug: 1 }, { unique: true });
 
 const GUIDES = [
   {
@@ -412,38 +425,29 @@ const NEWS = [
   },
 ];
 
-async function upsertBySlug(Model, docs, label) {
-  let created = 0;
-  let updated = 0;
-  for (const doc of docs) {
-    const result = await Model.findOneAndUpdate(
-      { slug: doc.slug },
-      { $set: doc },
-      { upsert: true, new: true, rawResult: true }
-    );
-    if (result.lastErrorObject?.updatedExisting) updated += 1;
-    else created += 1;
-  }
-  console.log(`${label}: ${created} creada(s), ${updated} actualizada(s).`);
-}
-
-async function main() {
-  const mongoUrl = (process.env.MONGO_URL_GLOBAL || "").trim();
-  if (!mongoUrl) {
-    throw new Error("MONGO_URL_GLOBAL es obligatorio (revisa tu .env).");
-  }
-
-  await mongoose.connect(mongoUrl);
-  console.log("Conectado a MongoDB.");
-
-  await upsertBySlug(Guide, GUIDES, "Guías");
-  await upsertBySlug(NewsArticle, NEWS, "Noticias");
-
-  await mongoose.disconnect();
-  console.log("Listo.");
-}
-
-main().catch((error) => {
-  console.error("Error al poblar contenido:", error);
-  process.exit(1);
+const now = new Date();
+let guidesCreated = 0;
+let guidesUpdated = 0;
+GUIDES.forEach((guide) => {
+  const result = db.guides.updateOne(
+    { slug: guide.slug },
+    { $set: guide, $setOnInsert: { createdAt: now }, $currentDate: { updatedAt: true } },
+    { upsert: true }
+  );
+  if (result.upsertedId) guidesCreated += 1;
+  else guidesUpdated += 1;
 });
+print(`Guías: ${guidesCreated} creada(s), ${guidesUpdated} actualizada(s).`);
+
+let newsCreated = 0;
+let newsUpdated = 0;
+NEWS.forEach((article) => {
+  const result = db.newsarticles.updateOne(
+    { slug: article.slug },
+    { $set: article, $setOnInsert: { createdAt: now }, $currentDate: { updatedAt: true } },
+    { upsert: true }
+  );
+  if (result.upsertedId) newsCreated += 1;
+  else newsUpdated += 1;
+});
+print(`Noticias: ${newsCreated} creada(s), ${newsUpdated} actualizada(s).`);
