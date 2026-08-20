@@ -26,6 +26,7 @@ export default class AdminNewsForm {
   notFound = signal(false);
   saving = signal(false);
   error = signal('');
+  savedMessage = signal('');
 
   slug = signal('');
   title = signal('');
@@ -120,9 +121,12 @@ export default class AdminNewsForm {
     return null;
   }
 
-  // publish=false: crea/guarda sin forzar el estado de publicación (una nota
-  // existente conserva su draft actual; una nueva se crea como borrador).
-  // publish=true: guarda y además fuerza draft=false.
+  // publish=false ("Guardar"): guarda sin forzar el estado de publicación
+  // (una nota existente conserva su draft actual; una nueva se crea como
+  // borrador) y se queda en el formulario -para poder seguir editando sin
+  // que cada guardado te regrese al listado-.
+  // publish=true ("Publicar"): guarda, fuerza draft=false, y ahí sí regresa
+  // al listado (es la acción que da por terminada la edición).
   save(publish: boolean): void {
     if (this.saving()) return;
     const validationError = this.validate();
@@ -137,6 +141,7 @@ export default class AdminNewsForm {
     }
 
     this.error.set('');
+    this.savedMessage.set('');
     this.saving.set(true);
 
     if (this.isEditMode && this.editingId) {
@@ -145,7 +150,11 @@ export default class AdminNewsForm {
       this.newsService.update(this.editingId, body, token).subscribe({
         next: () => {
           this.saving.set(false);
-          this.router.navigate(['/admin/noticias']);
+          if (publish) {
+            this.router.navigate(['/admin/noticias']);
+          } else {
+            this.savedMessage.set('Cambios guardados.');
+          }
         },
         error: (err: HttpErrorResponse) => {
           this.saving.set(false);
@@ -155,9 +164,19 @@ export default class AdminNewsForm {
     } else {
       const body = this.buildInput(!publish);
       this.newsService.create(body, token).subscribe({
-        next: () => {
+        next: (created) => {
           this.saving.set(false);
-          this.router.navigate(['/admin/noticias']);
+          if (publish) {
+            this.router.navigate(['/admin/noticias']);
+            return;
+          }
+          // "Guardar" en modo creación: pasa a modo edición sobre el
+          // registro recién creado -si no, un segundo click en "Guardar"
+          // crearía otra nota duplicada en vez de actualizar esta-.
+          this.editingId = created._id;
+          this.isEditMode = true;
+          this.router.navigate(['/admin/noticias', created._id, 'editar'], { replaceUrl: true });
+          this.savedMessage.set('Noticia creada como borrador.');
         },
         error: (err: HttpErrorResponse) => {
           this.saving.set(false);
