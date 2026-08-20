@@ -1,0 +1,188 @@
+<navbar />
+
+<main class="bg-[var(--color-bg)] min-h-screen">
+  <section class="border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+      <a routerLink="/admin/noticias" class="text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]">
+        &larr; Noticias
+      </a>
+      <h1 class="mt-2 text-2xl md:text-3xl font-bold text-[var(--color-ink)]">
+        {{ isEditMode ? 'Editar noticia' : 'Nueva noticia' }}
+      </h1>
+    </div>
+  </section>
+
+  <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+    @if (loading()) {
+      <p class="text-[var(--color-ink-soft)]">Cargando…</p>
+    } @else if (notFound()) {
+      <p class="text-[var(--color-ink-soft)]">No se encontró esa noticia.</p>
+    } @else {
+      <form class="grid grid-cols-1 lg:grid-cols-3 gap-6" (submit)="$event.preventDefault()">
+        <div class="lg:col-span-2 space-y-4">
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Título</label>
+              <input
+                type="text"
+                class="admin-input"
+                [value]="title()"
+                (input)="title.set(titleInput.value)"
+                #titleInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Slug (URL: /noticias/&lt;slug&gt;)</label>
+              <input
+                type="text"
+                class="admin-input"
+                placeholder="minusculas-con-guiones"
+                [value]="slug()"
+                (input)="slug.set(slugInput.value)"
+                #slugInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Descripción (resumen / meta description)</label>
+              <textarea
+                class="admin-input"
+                rows="3"
+                [value]="description()"
+                (input)="description.set(descriptionInput.value)"
+                #descriptionInput
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Cuerpo (HTML)</label>
+              <textarea
+                class="admin-input font-mono text-xs"
+                rows="18"
+                placeholder="<p>...</p>"
+                [value]="contentHtml()"
+                (input)="contentHtml.set(contentInput.value)"
+                #contentInput
+              ></textarea>
+              <p class="mt-1 text-xs text-[var(--color-ink-soft)]">HTML directo: &lt;p&gt;, &lt;h2&gt;, &lt;strong&gt;, &lt;a&gt;, &lt;ul&gt;/&lt;li&gt;.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 xl:p-6 space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Quién la escribió (autor)</label>
+              <input
+                type="text"
+                class="admin-input"
+                [value]="author()"
+                (input)="author.set(authorInput.value)"
+                #authorInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Medio colaborador</label>
+              <input
+                type="text"
+                class="admin-input"
+                [value]="sourceName()"
+                (input)="sourceName.set(sourceNameInput.value)"
+                #sourceNameInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Enlace a la publicación original</label>
+              <input
+                type="url"
+                class="admin-input"
+                placeholder="https://..."
+                [value]="sourceUrl()"
+                (input)="sourceUrl.set(sourceUrlInput.value)"
+                #sourceUrlInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Imagen (URL o ruta)</label>
+              <input
+                type="text"
+                class="admin-input"
+                placeholder="images/hero-highway.jpg"
+                [value]="image()"
+                (input)="image.set(imageInput.value)"
+                #imageInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Fecha de publicación</label>
+              <input
+                type="date"
+                class="admin-input"
+                [value]="publishedDate()"
+                (input)="publishedDate.set(publishedDateInput.value)"
+                #publishedDateInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Fecha de actualización (opcional)</label>
+              <input
+                type="date"
+                class="admin-input"
+                [value]="updatedDate()"
+                (input)="updatedDate.set(updatedDateInput.value)"
+                #updatedDateInput
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[var(--color-ink)] mb-1">Minutos de lectura</label>
+              <input
+                type="number"
+                min="1"
+                max="60"
+                class="admin-input"
+                [value]="readingMinutes()"
+                (input)="readingMinutes.set(+readingMinutesInput.value)"
+                #readingMinutesInput
+              />
+            </div>
+          </div>
+
+          @if (error()) {
+            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {{ error() }}
+            </div>
+          }
+
+          <div class="flex flex-col gap-2">
+            <button
+              type="button"
+              [disabled]="saving()"
+              (click)="save(true)"
+              class="w-full px-4 py-2 text-sm font-semibold text-center rounded-lg text-[var(--color-ink-invert)] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              Publicar
+            </button>
+            <button
+              type="button"
+              [disabled]="saving()"
+              (click)="save(false)"
+              class="w-full px-4 py-2 text-sm font-semibold text-center rounded-lg border border-[var(--color-border)] text-[var(--color-ink)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              Guardar
+            </button>
+            @if (isEditMode) {
+              <p class="text-xs text-[var(--color-ink-soft)] text-center">
+                "Guardar" no cambia si está publicada o no; usa "Publicar" o el listado de Noticias para eso.
+              </p>
+            }
+          </div>
+        </div>
+      </form>
+    }
+  </section>
+</main>

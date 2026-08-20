@@ -1,11 +1,12 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { map } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { SeoService } from 'src/app/services/seo.service';
-import { NEWS } from '../news.data';
+import { NewsService } from 'src/app/services/news.service';
+import { NewsArticle } from 'src/app/shared/interfaces/news-article.interface';
 
 const SITE_URL = 'https://peajesmx.com';
 
@@ -19,25 +20,46 @@ export default class NewsDetail {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private seo = inject(SeoService);
+  private newsService = inject(NewsService);
 
   private slug = toSignal(this.route.paramMap.pipe(map((params) => params.get('slug'))));
 
-  item = computed(() => NEWS.find((entry) => entry.slug === this.slug()));
+  // undefined mientras carga, null si el backend confirma que no existe (404),
+  // NewsArticle si se encontró. El effect() de abajo distingue estos tres estados.
+  private loadedItem = toSignal(
+    this.route.paramMap.pipe(
+      map((params) => params.get('slug')),
+      switchMap((slug) =>
+        slug
+          ? this.newsService.getBySlug(slug).pipe(
+              map((article): NewsArticle | null => article ?? null),
+              catchError(() => of(null))
+            )
+          : of(null)
+      )
+    )
+  );
+
+  item = computed(() => this.loadedItem() ?? undefined);
 
   private static readonly MAX_SUGGESTED = 3;
 
+  private allNews = toSignal(this.newsService.getAll(), { initialValue: [] as NewsArticle[] });
+
   otherNews = computed(() =>
-    NEWS.filter((entry) => entry.slug !== this.slug()).slice(0, NewsDetail.MAX_SUGGESTED)
+    this.allNews().filter((entry) => entry.slug !== this.slug()).slice(0, NewsDetail.MAX_SUGGESTED)
   );
 
   constructor() {
     effect(() => {
-      const item = this.item();
+      const loaded = this.loadedItem();
 
-      if (!item) {
+      if (loaded === undefined) return; // aún cargando
+      if (loaded === null) {
         this.router.navigate(['/noticias']);
         return;
       }
+      const item = loaded;
 
       const imageUrl = item.image.startsWith('http') ? item.image : `${SITE_URL}/${item.image}`;
 
@@ -48,7 +70,7 @@ export default class NewsDetail {
         image: imageUrl,
       });
 
-      // Contenido de prueba/placeholder: no debe indexarse hasta reemplazarse por una nota real.
+      // Contenido en revisión: no debe indexarse hasta publicarse (quitar `draft`).
       if (item.draft) {
         this.seo.setNoIndex();
       }
@@ -69,7 +91,7 @@ export default class NewsDetail {
         publisher: {
           '@type': 'Organization',
           name: 'PeajesMX',
-          logo: { '@type': 'ImageObject', url: 'https://peajesmx.com/logo/logo-color.png', width: 658, height: 615 }
+          logo: { '@type': 'ImageObject', url: 'https://peajesmx.com/logo/logo-color.png', width: 935, height: 874 }
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': `https://peajesmx.com/noticias/${item.slug}/` },
       });

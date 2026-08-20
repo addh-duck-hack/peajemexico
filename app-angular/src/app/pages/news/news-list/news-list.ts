@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Navbar } from 'src/app/shared/components/navbar/navbar';
 import { MainFooter } from 'src/app/shared/components/main-footer/main-footer';
 import { SeoService } from 'src/app/services/seo.service';
-import { NEWS } from '../news.data';
+import { NewsService } from 'src/app/services/news.service';
+import { NewsArticle } from 'src/app/shared/interfaces/news-article.interface';
 
 @Component({
   selector: 'news-list',
@@ -13,8 +15,13 @@ import { NEWS } from '../news.data';
 })
 export default class NewsList {
   private seo = inject(SeoService);
+  private newsService = inject(NewsService);
 
-  news = [...NEWS].sort((a, b) => b.publishedDate.localeCompare(a.publishedDate));
+  // El endpoint ya excluye borradores; solo falta ordenar por fecha.
+  private loadedNews = toSignal(this.newsService.getAll());
+  news = computed(() =>
+    [...(this.loadedNews() ?? [])].sort((a, b) => b.publishedDate.localeCompare(a.publishedDate))
+  );
 
   constructor() {
     this.seo.update({
@@ -32,22 +39,25 @@ export default class NewsList {
       ],
     });
 
-    // Solo las notas reales (sin `draft`) cuentan como contenido indexable del listado.
-    const published = this.news.filter((item) => !item.draft);
-    this.seo.setJsonLd('collection', {
-      '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Noticias sobre casetas y carreteras en México',
-      url: 'https://peajesmx.com/noticias/',
-      isPartOf: { '@type': 'WebSite', name: 'PeajesMX', url: 'https://peajesmx.com/' },
-      mainEntity: {
-        '@type': 'ItemList',
-        itemListElement: published.map((item, index) => ({
-          '@type': 'ListItem',
-          position: index + 1,
-          url: `https://peajesmx.com/noticias/${item.slug}/`,
-        })),
-      },
+    effect(() => {
+      const news: NewsArticle[] | undefined = this.loadedNews();
+      if (!news) return; // aún cargando
+
+      this.seo.setJsonLd('collection', {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Noticias sobre casetas y carreteras en México',
+        url: 'https://peajesmx.com/noticias/',
+        isPartOf: { '@type': 'WebSite', name: 'PeajesMX', url: 'https://peajesmx.com/' },
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: this.news().map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `https://peajesmx.com/noticias/${item.slug}/`,
+          })),
+        },
+      });
     });
   }
 }

@@ -30,6 +30,13 @@
         }
         @if (sessionUser(); as session) {
           <div class="flex items-center gap-3 mt-3 md:mt-0 md:ml-4">
+            @if (session.user.role === 'super_admin') {
+              <a
+                routerLink="/admin"
+                class="text-sm font-semibold text-main hover:text-[var(--color-accent)] transition-colors">
+                Admin
+              </a>
+            }
             <span class="text-sm font-semibold text-main">Hola, {{ session.user.name }}</span>
             <button
               type="button"

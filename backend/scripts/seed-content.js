@@ -1,26 +1,26 @@
-import { Article } from 'src/app/shared/interfaces/article.interface';
+// Migra a Mongo el contenido que hasta ahora vivía "hardcodeado" en
+// app-angular/src/app/pages/guides/guides.data.ts y .../news/news.data.ts,
+// para no perderlo al cortar el sitio a servir /guias y /noticias desde la
+// base de datos.
+//
+// Uso: node scripts/seed-content.js   (desde backend/, con un .env con
+// MONGO_URL_GLOBAL apuntando a la base correcta -local o producción-).
+//
+// Es seguro correrlo más de una vez: hace upsert por slug (no duplica ni
+// pisa campos que no estén en este archivo).
+require("dotenv").config();
+const mongoose = require("mongoose");
+const { Guide } = require("../models/guide.model");
+const { NewsArticle } = require("../models/news-article.model");
 
-/**
- * Artículos de la sección /guias.
- *
- * Para publicar uno nuevo:
- * 1. Agrega un objeto a este arreglo (slug único, sin acentos ni espacios).
- * 2. Asígnale una `category` de las ya existentes en ArticleCategory
- *    (article.interface.ts); solo agrega una categoría nueva ahí si de
- *    verdad vas a agrupar varios artículos bajo ese tema.
- * 3. El artículo se prerenderiza automáticamente (ver app.routes.server.ts,
- *    que lee este mismo arreglo para generar sus rutas estáticas).
- * 4. Agrega su URL a public/sitemap.xml (con <lastmod> = publishedDate) para
- *    que se indexe cuanto antes.
- */
-export const ARTICLES: Article[] = [
+const GUIDES = [
   {
-    slug: 'tipos-de-vehiculo-y-ejes-excedentes',
-    title: 'Tipos de vehículo y ejes excedentes: guía para entender tu tarifa de caseta',
+    slug: "tipos-de-vehiculo-y-ejes-excedentes",
+    title: "Tipos de vehículo y ejes excedentes: guía para entender tu tarifa de caseta",
     description:
       'Qué significan las categorías de vehículo (motocicleta, automóvil, autobús, camión) y los "ejes excedentes" que pide la calculadora de PeajesMX, y por qué cambian el costo de una caseta.',
-    category: 'Vehículos y ejes',
-    publishedDate: '2026-08-10',
+    category: "Vehículos y ejes",
+    publishedDate: "2026-08-10",
     readingMinutes: 5,
     contentHtml: `
       <p>
@@ -75,15 +75,15 @@ export const ARTICLES: Article[] = [
         costo real hacia varios destinos en
         <a href="/guias/cuanto-cuestan-casetas-rutas-populares-desde-cdmx">esta guía de rutas populares desde la Ciudad de México</a>.
       </p>
-    `
+    `,
   },
   {
-    slug: 'como-se-calculan-las-tarifas-de-casetas-en-mexico',
-    title: 'Cómo se calculan las tarifas de casetas en México',
+    slug: "como-se-calculan-las-tarifas-de-casetas-en-mexico",
+    title: "Cómo se calculan las tarifas de casetas en México",
     description:
-      'De dónde salen los datos que usa PeajesMX para estimar el costo de tu ruta, qué factores influyen en la tarifa de una caseta y qué limitaciones tiene este tipo de cálculo.',
-    category: 'Tarifas y cálculo',
-    publishedDate: '2026-08-17',
+      "De dónde salen los datos que usa PeajesMX para estimar el costo de tu ruta, qué factores influyen en la tarifa de una caseta y qué limitaciones tiene este tipo de cálculo.",
+    category: "Tarifas y cálculo",
+    publishedDate: "2026-08-17",
     readingMinutes: 4,
     contentHtml: `
       <p>
@@ -136,15 +136,15 @@ export const ARTICLES: Article[] = [
         puedas planear tu viaje con anticipación. Si buscas el detalle legal completo de esta independencia
         frente al INEGI, CAPUFE y la SICT, está en nuestro <a href="/legales">Aviso Legal</a>.
       </p>
-    `
+    `,
   },
   {
-    slug: 'pago-con-tag-en-casetas-capufe',
-    title: 'Pago con TAG en las casetas: qué es #CeroEfectivo de CAPUFE y qué pasa si no tienes uno',
+    slug: "pago-con-tag-en-casetas-capufe",
+    title: "Pago con TAG en las casetas: qué es #CeroEfectivo de CAPUFE y qué pasa si no tienes uno",
     description:
-      'Qué cambió con las nuevas reglas de CAPUFE del 30 de julio de 2026, si de verdad desapareció el efectivo en las casetas, y qué hacer si tu vehículo no trae TAG.',
-    category: 'Pagos y TAG',
-    publishedDate: '2026-08-02',
+      "Qué cambió con las nuevas reglas de CAPUFE del 30 de julio de 2026, si de verdad desapareció el efectivo en las casetas, y qué hacer si tu vehículo no trae TAG.",
+    category: "Pagos y TAG",
+    publishedDate: "2026-08-02",
     readingMinutes: 5,
     contentHtml: `
       <p>
@@ -197,15 +197,15 @@ export const ARTICLES: Article[] = [
         PeajesMX es un servicio independiente y no está afiliado a CAPUFE; puedes ver el detalle en nuestro
         <a href="/legales">Aviso Legal</a>.
       </p>
-    `
+    `,
   },
   {
-    slug: 'iave-pase-televia-easytrip-diferencias',
-    title: 'IAVE, PASE, Televía o EasyTrip: diferencias entre los TAG de las casetas y cuál te conviene',
+    slug: "iave-pase-televia-easytrip-diferencias",
+    title: "IAVE, PASE, Televía o EasyTrip: diferencias entre los TAG de las casetas y cuál te conviene",
     description:
-      'Comparamos costo de adquisición, cobertura y trámite de los principales TAG de telepeaje en México para ayudarte a elegir antes de tu próximo viaje.',
-    category: 'Pagos y TAG',
-    publishedDate: '2026-08-04',
+      "Comparamos costo de adquisición, cobertura y trámite de los principales TAG de telepeaje en México para ayudarte a elegir antes de tu próximo viaje.",
+    category: "Pagos y TAG",
+    publishedDate: "2026-08-04",
     readingMinutes: 5,
     contentHtml: `
       <p>
@@ -258,15 +258,15 @@ export const ARTICLES: Article[] = [
         no cuánto pagas. Puedes seguir usando la <a href="/calcular-mi-ruta">calculadora de PeajesMX</a> para
         presupuestar tu ruta antes de salir, sin importar con qué operador viajes.
       </p>
-    `
+    `,
   },
   {
-    slug: 'aumento-tarifas-casetas-mexico-2026',
-    title: 'Aumento de tarifas de casetas en México en 2026: qué subió y cuánto',
+    slug: "aumento-tarifas-casetas-mexico-2026",
+    title: "Aumento de tarifas de casetas en México en 2026: qué subió y cuánto",
     description:
-      'El ajuste de tarifas de CAPUFE de abril de 2026: cuánto subieron las casetas, en qué autopistas, y por qué el resultado de la calculadora puede diferir de lo que recordabas.',
-    category: 'Tarifas y cálculo',
-    publishedDate: '2026-07-08',
+      "El ajuste de tarifas de CAPUFE de abril de 2026: cuánto subieron las casetas, en qué autopistas, y por qué el resultado de la calculadora puede diferir de lo que recordabas.",
+    category: "Tarifas y cálculo",
+    publishedDate: "2026-07-08",
     readingMinutes: 4,
     contentHtml: `
       <p>
@@ -313,15 +313,15 @@ export const ARTICLES: Article[] = [
         caseta -tipo de vehículo, ejes excedentes, el concesionario de cada tramo-, tenemos el detalle completo
         en <a href="/guias/como-se-calculan-las-tarifas-de-casetas-en-mexico">esta guía sobre cómo se calculan las tarifas</a>.
       </p>
-    `
+    `,
   },
   {
-    slug: 'cuanto-cuestan-casetas-rutas-populares-desde-cdmx',
-    title: 'Cuánto cuestan las casetas desde Ciudad de México a los destinos más buscados',
+    slug: "cuanto-cuestan-casetas-rutas-populares-desde-cdmx",
+    title: "Cuánto cuestan las casetas desde Ciudad de México a los destinos más buscados",
     description:
-      'El costo real de casetas desde la Ciudad de México hacia Acapulco, Guadalajara, Puebla, Cancún y Puerto Vallarta en automóvil, calculado con datos del INEGI.',
-    category: 'Rutas y carreteras',
-    publishedDate: '2026-08-13',
+      "El costo real de casetas desde la Ciudad de México hacia Acapulco, Guadalajara, Puebla, Cancún y Puerto Vallarta en automóvil, calculado con datos del INEGI.",
+    category: "Rutas y carreteras",
+    publishedDate: "2026-08-13",
     readingMinutes: 4,
     contentHtml: `
       <p>
@@ -361,6 +361,89 @@ export const ARTICLES: Article[] = [
         el mapa-, usa directamente la <a href="/calcular-mi-ruta">calculadora de PeajesMX</a>: estas cifras son
         un punto de partida para presupuestar, no un cobro garantizado.
       </p>
-    `
-  }
+    `,
+  },
 ];
+
+const NEWS = [
+  {
+    slug: "nota-de-ejemplo-seccion-noticias",
+    title: "[Nota de ejemplo] Así se verán las noticias en colaboración con otros medios",
+    description:
+      "Nota de prueba para validar el diseño de la nueva sección de Noticias de PeajesMX antes de publicar contenido real de un medio colaborador.",
+    author: "Redacción de prueba",
+    sourceName: "Medio Colaborador de Ejemplo",
+    sourceUrl: "https://www.example.com/nota-original-de-ejemplo",
+    publishedDate: "2026-08-19",
+    image: "images/cta-mountain-road.jpg",
+    readingMinutes: 2,
+    draft: true,
+    contentHtml: `
+      <p>
+        Esta nota es un <strong>artículo de ejemplo</strong>, no contenido real. Se usa para revisar
+        cómo se ve una nota en la nueva sección de Noticias antes de publicar la primera colaboración
+        real con un medio externo.
+      </p>
+
+      <h2>¿En qué se diferencia de las Guías?</h2>
+      <p>
+        Las guías (<a href="/guias">/guias</a>) son artículos escritos por el equipo de PeajesMX.
+        Las noticias, en cambio, son notas escritas y firmadas por medios colaboradores externos:
+        cada nota muestra quién la redactó y un enlace a la publicación original en el sitio del
+        colaborador, como el que aparece al final de esta nota.
+      </p>
+
+      <h2>Qué debe traer cada nota real</h2>
+      <ul>
+        <li>Un título y un resumen claros.</li>
+        <li>Fecha de publicación.</li>
+        <li>Una imagen destacada.</li>
+        <li>El nombre de quien la escribió.</li>
+        <li>Un enlace a la nota original en el sitio del medio colaborador.</li>
+      </ul>
+
+      <h2>Créditos de esta nota de ejemplo</h2>
+      <p>
+        Nota de prueba escrita por <strong>Redacción de prueba</strong>, publicada en colaboración
+        de ejemplo con <a href="https://www.example.com/nota-original-de-ejemplo" target="_blank" rel="noreferrer">Medio Colaborador de Ejemplo</a>.
+        Reemplaza estos datos por los de una colaboración real antes de publicar.
+      </p>
+    `,
+  },
+];
+
+async function upsertBySlug(Model, docs, label) {
+  let created = 0;
+  let updated = 0;
+  for (const doc of docs) {
+    const result = await Model.findOneAndUpdate(
+      { slug: doc.slug },
+      { $set: doc },
+      { upsert: true, new: true, rawResult: true }
+    );
+    if (result.lastErrorObject?.updatedExisting) updated += 1;
+    else created += 1;
+  }
+  console.log(`${label}: ${created} creada(s), ${updated} actualizada(s).`);
+}
+
+async function main() {
+  const mongoUrl = (process.env.MONGO_URL_GLOBAL || "").trim();
+  if (!mongoUrl) {
+    throw new Error("MONGO_URL_GLOBAL es obligatorio (revisa tu .env).");
+  }
+
+  await mongoose.connect(mongoUrl);
+  console.log("Conectado a MongoDB.");
+
+  await upsertBySlug(Guide, GUIDES, "Guías");
+  await upsertBySlug(NewsArticle, NEWS, "Noticias");
+
+  await mongoose.disconnect();
+  console.log("Listo.");
+}
+
+main().catch((error) => {
+  console.error("Error al poblar contenido:", error);
+  process.exit(1);
+});

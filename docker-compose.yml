@@ -3,11 +3,37 @@ services:
     build:
       context: .
       dockerfile: ./app-angular/Dockerfile
+      target: nginx-runtime
     container_name: peajemx-frontend
     restart: always
     networks:
       - npm
       - peajemx-frontend-net
+  # Renderiza /guias y /noticias en el momento de cada visita (ver
+  # app-angular/src/app/app.routes.server.ts y app-angular/src/server.ts) en
+  # vez de en build time: con frontend y backend construyéndose juntos en
+  # este mismo docker-compose, el backend todavía no existe como contenedor
+  # cuando se construye la imagen del frontend, así que un build que necesite
+  # consultarlo por red siempre fallaba. peajemx-frontend (nginx, arriba) le
+  # reenvía específicamente /guias y /noticias -ver nginx.conf-; el resto del
+  # sitio se sigue sirviendo estático exactamente igual que antes.
+  peajemx-frontend-ssr:
+    build:
+      context: .
+      dockerfile: ./app-angular/Dockerfile
+      target: ssr-runtime
+    container_name: peajemx-frontend-ssr
+    restart: always
+    environment:
+      # Dominios permitidos para el header Host de las peticiones que le
+      # reenvía nginx (protección SSRF de @angular/ssr); sin esto, cada
+      # visita a /guias o /noticias cae de vuelta a un shell sin contenido
+      # server-rendered. Ver el error real documentado en el commit que
+      # introdujo esta variable.
+      NG_ALLOWED_HOSTS: "peajesmx.com,www.peajesmx.com"
+    networks:
+      - peajemx-frontend-net
+      - peajemx-services-net
   peajemx-services:
     build: ./backend
     container_name: peajemx-services

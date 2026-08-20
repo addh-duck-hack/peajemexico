@@ -1,0 +1,27 @@
+<navbar />
+
+<main class="bg-[var(--color-bg)] min-h-screen">
+  <section class="border-b border-[var(--color-border)]">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+      <h1 class="text-2xl md:text-3xl font-bold text-[var(--color-ink)]">Panel de administración</h1>
+      <p class="mt-2 text-[var(--color-ink-soft)]">Contenido de /guias y /noticias, publicado directamente sin necesidad de un release del sitio.</p>
+    </div>
+  </section>
+
+  <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
+      <a
+        routerLink="/admin/guias"
+        class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 hover:border-[var(--color-accent)] transition-colors">
+        <h2 class="text-lg font-bold text-[var(--color-ink)]">Guías</h2>
+        <p class="mt-2 text-sm text-[var(--color-ink-soft)]">Crear, editar, publicar/despublicar y borrar guías.</p>
+      </a>
+      <a
+        routerLink="/admin/noticias"
+        class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 hover:border-[var(--color-accent)] transition-colors">
+        <h2 class="text-lg font-bold text-[var(--color-ink)]">Noticias</h2>
+        <p class="mt-2 text-sm text-[var(--color-ink-soft)]">Crear, editar, publicar/despublicar y borrar notas.</p>
+      </a>
+    </div>
+  </section>
+</main>
