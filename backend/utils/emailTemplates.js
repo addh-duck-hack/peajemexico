@@ -6,16 +6,19 @@ const path = require("path");
 const sharp = require("sharp");
 
 const LOGO_CID = "peajesmx-logo-mark";
-const LOGO_SVG_PATH = path.join(__dirname, "..", "assets", "email", "logo-mark.svg");
+const LOGO_SOURCE_PATH = path.join(__dirname, "..", "assets", "email", "logo-mark.png");
 
-// El logo se rasteriza una sola vez (SVG -> PNG) y se cachea en memoria: los clientes
-// de correo (Outlook, muchas apps de Gmail) no soportan <img> con SVG, así que se
-// embebe como PNG adjunto referenciado por cid en el <img> del header.
+// El logo se redimensiona una sola vez y se cachea en memoria: los clientes de correo
+// (Outlook, muchas apps de Gmail) no soportan <img> con SVG, así que se embebe como PNG
+// adjunto referenciado por cid en el <img> del header. La fuente es una copia del logo
+// oficial en app-angular/src/assets/logo/logo-color.png — se copia en vez de referenciarse
+// porque backend y frontend corren en contenedores separados sin filesystem compartido;
+// si el logo se actualiza ahí, hay que volver a copiarlo aquí.
 let logoAttachmentPromise = null;
 function getLogoAttachment() {
   if (!logoAttachmentPromise) {
-    logoAttachmentPromise = sharp(fs.readFileSync(LOGO_SVG_PATH), { density: 384 })
-      .resize(144, 144)
+    logoAttachmentPromise = sharp(fs.readFileSync(LOGO_SOURCE_PATH))
+      .resize(144, 144, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toBuffer()
       .then((buffer) => ({
