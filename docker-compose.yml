@@ -7,21 +7,13 @@ services:
     restart: always
     networks:
       - npm
-      - peajemx-frontend-net
   peajemx-services:
     build: ./backend
     container_name: peajemx-services
     restart: always
     networks:
       - npm
-      - peajemx-services-net
 
 networks:
-  peajemx-frontend-net:
-    name: peajemx-frontend-net
-    driver: bridge
-  peajemx-services-net:
-    name: peajemx-services-net
-    driver: bridge
   npm:
     external: true
