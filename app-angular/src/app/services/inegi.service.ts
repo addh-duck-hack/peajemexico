@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { DestinationInegi, DestinationResponse } from '../shared/interfaces/destination.interface';
 import { DataCostInegi, RouteCostResponse } from '../shared/interfaces/route.cost.interface';
 import { DataDetailCostInegi, DetailRouteCostResponse } from '../shared/interfaces/detail-route.cost.interface';
+import { stripAccents } from '../shared/utils/text.util';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,14 @@ export class InegiService {
       'Authorization': `Bearer ${token}`
     });
 
+    // El buscador de destinos de INEGI no regresa resultados para nombres de
+    // lugares con acentos (p. ej. "Querétaro"), así que se limpian antes de
+    // mandarlos; también se codifica el segmento de la URL por si el término
+    // trae espacios u otros caracteres especiales.
+    const cleanSearch = encodeURIComponent(stripAccents(search));
+
     return this.http.get<DestinationResponse>(
-      `${ this.env.urlbackend }/api/ds/destination/${ search }`,
+      `${ this.env.urlbackend }/api/ds/destination/${ cleanSearch }`,
       { headers }
     ).pipe(
       map(({ inegi }) => inegi),

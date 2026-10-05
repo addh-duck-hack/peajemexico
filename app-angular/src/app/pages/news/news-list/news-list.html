@@ -16,7 +16,7 @@
 
   <section class="max-w-screen-xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-14">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      @for (item of news; track item.slug) {
+      @for (item of news(); track item.slug) {
         <a
           [routerLink]="['/noticias', item.slug]"
           class="flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] transition-colors">

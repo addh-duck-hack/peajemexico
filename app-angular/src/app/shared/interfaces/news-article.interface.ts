@@ -4,6 +4,8 @@
  * cada nota necesita su propia atribución de autoría y de fuente.
  */
 export interface NewsArticle {
+  /** Id de Mongo, lo usa el panel /admin para editar/borrar (no se expone en las páginas públicas). */
+  _id: string;
   /** Segmento de URL, ej. 'nota-de-ejemplo' -> /noticias/nota-de-ejemplo */
   slug: string;
   title: string;

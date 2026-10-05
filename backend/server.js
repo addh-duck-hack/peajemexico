@@ -44,6 +44,18 @@ const localDevOrigins = new Set([
   'http://127.0.0.1:5173',
 ]);
 
+// Endpoints de lectura pública consumidos fuera del navegador: el propio
+// build de Angular los consulta en build-time (getPrerenderParams() y
+// generate-sitemap.mjs) para prerenderizar /guias y /noticias, y esas
+// peticiones server-to-server nunca traen header Origin. CORS solo protege
+// lecturas hechas por JS de un navegador -no bloquea curl/servidores, que
+// pueden leer estos datos igual con o sin esta excepción-, así que permitir
+// aquí peticiones sin Origin no abre superficie nueva: es contenido sin auth,
+// pensado para leerse desde cualquier lado.
+const PUBLIC_CONTENT_PATH_PREFIXES = ["/api/ds/guides", "/api/ds/news"];
+const isPublicContentPath = (path) =>
+  PUBLIC_CONTENT_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+
 const corsOptions = {
   origin: (origin, callback) => {
     // Permite herramientas sin origen (curl/postman/server-to-server) solo si CORS_ALLOW_LOCAL_DEV está en true
@@ -77,8 +89,15 @@ const mailRoutes = require("./routes/mail.routes");
 //const uploadRoutes = require("./routes/upload.routes");
 const destinationRoutes = require("./routes/destination.routes")
 const routeCostRoutes = require("./routes/route.cost.routes")
+const guideRoutes = require("./routes/guide.routes")
+const newsRoutes = require("./routes/news.routes")
 
-app.use(cors(corsOptions));
+app.use(cors((req, callback) => {
+  if (isPublicContentPath(req.path)) {
+    return callback(null, { ...corsOptions, origin: true });
+  }
+  return callback(null, corsOptions);
+}));
 app.use(
   helmet({
     // API-only backend: CSP se gestiona en frontends.
@@ -92,6 +111,8 @@ app.use("/api/ds/mail", mailRoutes);
 //app.use("/api/ds/uploads", uploadRoutes);
 app.use("/api/ds/destination",destinationRoutes)
 app.use("/api/ds/route/cost", routeCostRoutes)
+app.use("/api/ds/guides", guideRoutes)
+app.use("/api/ds/news", newsRoutes)
 
 // Servir la carpeta uploads como estática
 // const uploadsDir = resolveUploadsDir();

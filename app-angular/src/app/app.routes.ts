@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { superAdminGuard } from './guards/super-admin.guard';
 
 export const routes: Routes = [
   {
@@ -44,6 +45,19 @@ export const routes: Routes = [
   {
     path: 'noticias/:slug',
     loadComponent: () => import('./pages/news/news-detail/news-detail')
+  },
+  {
+    path: 'admin',
+    canActivate: [superAdminGuard],
+    children: [
+      { path: '', loadComponent: () => import('./pages/admin/admin-home/admin-home') },
+      { path: 'guias', loadComponent: () => import('./pages/admin/admin-guides-list/admin-guides-list') },
+      { path: 'guias/nueva', loadComponent: () => import('./pages/admin/admin-guide-form/admin-guide-form') },
+      { path: 'guias/:id/editar', loadComponent: () => import('./pages/admin/admin-guide-form/admin-guide-form') },
+      { path: 'noticias', loadComponent: () => import('./pages/admin/admin-news-list/admin-news-list') },
+      { path: 'noticias/nueva', loadComponent: () => import('./pages/admin/admin-news-form/admin-news-form') },
+      { path: 'noticias/:id/editar', loadComponent: () => import('./pages/admin/admin-news-form/admin-news-form') },
+    ]
   },
   {
     path: 'login',

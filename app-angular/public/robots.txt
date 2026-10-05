@@ -3,5 +3,6 @@ Allow: /
 Disallow: /login
 Disallow: /reset-password
 Disallow: /users/verify
+Disallow: /admin
 
 Sitemap: https://peajesmx.com/sitemap.xml
