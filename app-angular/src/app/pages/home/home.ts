@@ -61,7 +61,7 @@ export default class Home {
         areaServed: 'MX',
         availableLanguage: ['es']
       }],
-      sameAs: ['https://mx.duck-hack.cloud']
+      sameAs: ['https://duck-hack.cloud']
     });
     this.seo.setJsonLd('website', {
       '@context': 'https://schema.org',
