@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { tollCalculatorRateLimiter } = require("../middleware/rateLimitMiddleware");
 const { sendError } = require("../utils/httpResponses");
+const { postToInegi, sendInegiResponseError, sendInegiFailure } = require("../utils/inegi");
 
 // Endpoint público para buscar destinos (limitado por IP, ver rateLimitMiddleware)
 router.get('/:search', tollCalculatorRateLimiter, async (req, res) => {
@@ -13,24 +14,17 @@ router.get('/:search', tollCalculatorRateLimiter, async (req, res) => {
   }
 
   // Consumo al api del INEGI
-  const urlFinal = process.env.INEGI_URL_API + "/buscadestino";
   try {
-    const response = await fetch(urlFinal, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        key: process.env.INEGI_APIKEY,
-        type: process.env.INEGI_TYPE_RESPONSE,
-        num: process.env.INEGI_NUM_RESULTS,
-        proj: process.env.INEGI_PROJ_TYPE,
-        buscar: search.trim()
-      }),
+    const response = await postToInegi('/buscadestino', {
+      key: process.env.INEGI_APIKEY,
+      type: process.env.INEGI_TYPE_RESPONSE,
+      num: process.env.INEGI_NUM_RESULTS,
+      proj: process.env.INEGI_PROJ_TYPE,
+      buscar: search.trim()
     });
 
     if (!response.ok) {
-      return sendError(res, response.status, 'INEGI_API_ERROR', 'Error al consultar la API del INEGI');
+      return sendInegiResponseError(res, response);
     }
 
     const data = await response.json();
@@ -41,8 +35,7 @@ router.get('/:search', tollCalculatorRateLimiter, async (req, res) => {
       inegi: data
     });
   } catch (error) {
-    console.error('Error en la petición a INEGI:', error);
-    return sendError(res, 500, 'INTERNAL_ERROR', 'Error interno al procesar la búsqueda');
+    return sendInegiFailure(res, error);
   }
 });
 
